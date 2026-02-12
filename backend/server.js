@@ -13,5 +13,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log(err));
  // Routes
  app.use("/api/auth", require("./routes/authRoutes"));
+ app.use("/api/test", require("./routes/testRoutes"));
+
 app.listen(PORT, () => console.log(`Serveur démarré sur le port
 ${PORT}`));
