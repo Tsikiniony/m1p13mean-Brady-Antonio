@@ -15,25 +15,33 @@ export class Login {
   email: string = '';
   password: string = '';
 
-  constructor(
-    private auth: AuthService,
-    private router: Router
-  ) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   onLogin() {
-    this.auth.login({
-      email: this.email,
-      password: this.password
-    }).subscribe((res: any) => {
+    this.auth.login({ email: this.email, password: this.password })
+      .subscribe((res: any) => {
 
-      this.auth.saveToken(res.token);
+        // Sauvegarder le token
+        this.auth.saveToken(res.token);
 
-      if (res.user.role === 'admin') {
-        this.router.navigate(['/admin']);
-      }
+        // Redirection selon rôle
+        switch(res.user.role){
+          case 'admin':
+            this.router.navigate(['/admin']);
+            break;
+          case 'client':
+            this.router.navigate(['/client']);
+            break;
+          case 'boutique':
+            this.router.navigate(['/boutique']);
+            break;
+          default:
+            alert('Rôle inconnu');
+        }
 
-    }, err => {
-      alert("Erreur login");
-    });
+      }, err => {
+        alert('Email ou mot de passe incorrect');
+      });
   }
+
 }
