@@ -1,9 +1,17 @@
 <h2>Connexion</h2>
+<div class="login-container">
+  <h2>🔐 Login</h2>
+  
+  <div class="form-group">
+    <input type="email" [(ngModel)]="email" placeholder="📧 Votre email">
+  </div>
 
-<input type="email" [(ngModel)]="email" placeholder="Email">
-<br><br>
+  <div class="form-group">
+    <input type="password" [(ngModel)]="password" placeholder="🔒 Votre mot de passe">
+  </div>
 
 <input type="password" [(ngModel)]="password" placeholder="Mot de passe">
 <br><br>
 
 <button (click)="onLogin()">Se connecter</button>
+</div>
