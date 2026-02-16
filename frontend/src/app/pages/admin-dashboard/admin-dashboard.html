@@ -1,2 +1,20 @@
-<h1>Bienvenue Admin 👑</h1>
-<button (click)="logout()">Logout</button>
+<div class="admin-layout">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>👑 Admin Panel</h2>
+    </div>
+    <div class="navbar-links">
+      <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+        <span>👥</span> Users
+      </a>
+      <a routerLink="/admin/boutique" routerLinkActive="active" class="nav-link">
+        <span>🏪</span> Boutique
+      </a>
+    </div>
+    <button (click)="logout()" class="logout-btn">🚪 Logout</button>
+  </nav>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
