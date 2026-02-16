@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService, User } from '../../services/user.service';
 
@@ -19,11 +20,14 @@ export class UsersManagementComponent implements OnInit {
   savingUser = false;
   deletingUserId: string | null = null;
   error = '';
+  private platformId = inject(PLATFORM_ID);
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.loadUsers();
+    if (isPlatformBrowser(this.platformId)) {
+      setTimeout(() => this.loadUsers());
+    }
   }
 
   getEmptyUser(): User {
@@ -43,11 +47,13 @@ export class UsersManagementComponent implements OnInit {
       next: (users) => {
         this.users = users;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = 'Erreur lors du chargement des utilisateurs';
         console.error(err);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
