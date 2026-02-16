@@ -25,14 +25,20 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    let token = '';
+    let token: string | null = null;
     if (isPlatformBrowser(this.platformId)) {
-      token = localStorage.getItem('token') || '';
+      token = localStorage.getItem('token');
     }
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
     });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return headers;
   }
 
   getAllUsers(): Observable<User[]> {
