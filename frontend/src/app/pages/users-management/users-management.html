@@ -23,6 +23,30 @@
     </div>
   </div>
 
+  <div class="table-container" *ngIf="pendingBoutiques.length > 0 && !loading" style="margin-bottom: 20px;">
+    <h3 style="margin: 0 0 12px 0;">🕒 Boutiques en attente de validation</h3>
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let b of pendingBoutiques">
+          <td>{{b.name}}</td>
+          <td>{{b.email}}</td>
+          <td>
+            <button class="btn-edit" (click)="approveBoutique(b._id)" [disabled]="isApprovingBoutique(b._id)">
+              {{isApprovingBoutique(b._id) ? '⏳ Validation...' : '✅ Approuver'}}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="loading" *ngIf="loading">
     <div class="spinner"></div>
     <p>Chargement des utilisateurs...</p>

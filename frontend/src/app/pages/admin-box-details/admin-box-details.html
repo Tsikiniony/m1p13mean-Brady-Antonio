@@ -1,0 +1,36 @@
+<div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+  <h1 style="margin:0;">🔎 Détails Box</h1>
+  <a routerLink="/admin/boxes" class="back-link">⬅️ Retour</a>
+</div>
+
+<div class="error-message" *ngIf="error">
+  {{ error }}
+</div>
+
+<div class="loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Chargement...</p>
+</div>
+
+<div class="card" *ngIf="!loading && box">
+  <div class="row">
+    <div class="label">Nom</div>
+    <div class="value">{{ box.name }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Numéro</div>
+    <div class="value">{{ box.number }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Loyer</div>
+    <div class="value">{{ box.rent }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Status</div>
+    <div class="value">{{ getStatusLabel() }}</div>
+  </div>
+
+</div>

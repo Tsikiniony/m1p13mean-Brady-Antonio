@@ -1,0 +1,62 @@
+<div class="public-layout">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>📦 Box</h2>
+    </div>
+    <div class="navbar-links">
+      <a routerLink="/admin/boxes" routerLinkActive="active" class="nav-link">Box</a>
+      <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>
+      <a routerLink="/admin" routerLinkActive="active" class="nav-link">Admin</a>
+    </div>
+  </nav>
+
+  <div class="details-container">
+    <div class="header">
+      <a routerLink="/admin/boxes" class="back-link">⬅️ Retour</a>
+      <h1>🔎 Détails Box</h1>
+    </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+    <div class="card" *ngIf="!loading && box">
+    <div class="row">
+      <div class="label">Nom</div>
+      <div class="value">{{ box.name }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Numéro</div>
+      <div class="value">{{ box.number }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Loyer</div>
+      <div class="value">{{ box.rent }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Status</div>
+      <div class="value">
+        <span class="status" [class.taken]="box.status === 'prise'">{{ box.status }}</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label">Boutique</div>
+      <div class="value">{{ getBoutiqueLabel() }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Expiration loyer</div>
+      <div class="value">{{ getRentExpiresAtLabel() }}</div>
+    </div>
+    </div>
+  </div>
+</div>

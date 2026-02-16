@@ -13,12 +13,14 @@ import { UserService, User } from '../../services/user.service';
 })
 export class UsersManagementComponent implements OnInit {
   users: User[] = [];
+  pendingBoutiques: User[] = [];
   showModal = false;
   isEditMode = false;
   currentUser: User = this.getEmptyUser();
   loading = false;
   savingUser = false;
   deletingUserId: string | null = null;
+  approvingBoutiqueId: string | null = null;
   error = '';
   private platformId = inject(PLATFORM_ID);
 
@@ -26,8 +28,43 @@ export class UsersManagementComponent implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      setTimeout(() => this.loadUsers());
+      setTimeout(() => {
+        this.loadUsers();
+        this.loadPendingBoutiques();
+      });
     }
+  }
+
+  loadPendingBoutiques() {
+    this.userService.getPendingBoutiques().subscribe({
+      next: (boutiques) => {
+        this.pendingBoutiques = boutiques;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  approveBoutique(id: string | undefined) {
+    if (!id) return;
+    this.approvingBoutiqueId = id;
+    this.userService.approveBoutique(id).subscribe({
+      next: () => {
+        this.loadPendingBoutiques();
+        this.loadUsers();
+        this.approvingBoutiqueId = null;
+      },
+      error: (err) => {
+        console.error(err);
+        this.approvingBoutiqueId = null;
+      }
+    });
+  }
+
+  isApprovingBoutique(id: string | undefined): boolean {
+    return id === this.approvingBoutiqueId;
   }
 
   getEmptyUser(): User {

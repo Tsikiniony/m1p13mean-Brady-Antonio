@@ -21,7 +21,8 @@ exports.register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role
+      role,
+      isApproved: role !== "boutique"
     });
 
     res.status(201).json({ message: "Utilisateur créé avec succès" });
@@ -47,6 +48,10 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Mot de passe incorrect" });
     }
 
+    if (user.role === "boutique" && !user.isApproved) {
+      return res.status(403).json({ message: "Compte boutique en attente de validation" });
+    }
+
     // Créer token
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -60,7 +65,8 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        isApproved: user.isApproved
       }
     });
 

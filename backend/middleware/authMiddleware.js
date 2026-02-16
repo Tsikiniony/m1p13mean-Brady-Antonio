@@ -5,6 +5,8 @@ exports.protect = async (req, res, next) => {
   try {
     let token;
 
+    console.log("[protect]", req.method, req.originalUrl, "authHeader=", req.headers.authorization);
+
     // Vérifier si token existe
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
       token = req.headers.authorization.split(" ")[1];
@@ -23,6 +25,7 @@ exports.protect = async (req, res, next) => {
     next();
 
   } catch (error) {
+    console.error("[protect] Token invalide", error?.message || error);
     res.status(401).json({ message: "Token invalide" });
   }
 };

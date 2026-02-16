@@ -43,7 +43,8 @@ exports.createUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: role || "client"
+      role: role || "client",
+      isApproved: true
     });
 
     const userResponse = user.toObject();
@@ -58,13 +59,18 @@ exports.createUser = async (req, res) => {
 // UPDATE USER
 exports.updateUser = async (req, res) => {
   try {
-    const { name, email, role, isActive, password } = req.body;
+    const { name, email, role, isActive, password, isApproved } = req.body;
     
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
     if (role) updateData.role = role;
     if (typeof isActive !== 'undefined') updateData.isActive = isActive;
+    if (typeof isApproved !== 'undefined') updateData.isApproved = isApproved;
+
+    if (role === "boutique" && typeof isApproved === 'undefined') {
+      updateData.isApproved = true;
+    }
     
     // Si un nouveau mot de passe est fourni, le hasher
     if (password) {
@@ -74,7 +80,7 @@ exports.updateUser = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       updateData,
-      { new: true, runValidators: true }
+      { returnDocument: "after", runValidators: true }
     ).select("-password");
 
     if (!user) {
@@ -97,6 +103,52 @@ exports.deleteUser = async (req, res) => {
     }
 
     res.json({ message: "Utilisateur supprimé avec succès" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// GET boutiques en attente (admin)
+exports.getPendingBoutiques = async (req, res) => {
+  try {
+    const boutiques = await User.find({ role: "boutique", isApproved: false })
+      .select("-password")
+      .sort({ createdAt: -1 });
+    res.json(boutiques);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// GET boutiques approuvées (admin)
+exports.getApprovedBoutiques = async (req, res) => {
+  try {
+    const boutiques = await User.find({ role: "boutique", isApproved: true })
+      .select("-password")
+      .sort({ createdAt: -1 });
+    res.json(boutiques);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// APPROVE boutique (admin)
+exports.approveBoutique = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+    if (user.role !== "boutique") {
+      return res.status(400).json({ message: "Cet utilisateur n'est pas une boutique" });
+    }
+
+    user.isApproved = true;
+    await user.save();
+
+    const userResponse = user.toObject();
+    delete userResponse.password;
+    res.json(userResponse);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

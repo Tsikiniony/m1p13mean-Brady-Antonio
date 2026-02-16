@@ -9,6 +9,7 @@ export interface User {
   email: string;
   password?: string;
   role: string;
+  isApproved?: boolean;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -59,5 +60,17 @@ export class UserService {
 
   deleteUser(id: string): Observable<any> {
     return this.http.delete(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
+  }
+
+  getPendingBoutiques(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.API_URL}/boutiques/pending`, { headers: this.getHeaders() });
+  }
+
+  getApprovedBoutiques(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.API_URL}/boutiques/approved`, { headers: this.getHeaders() });
+  }
+
+  approveBoutique(id: string): Observable<User> {
+    return this.http.put<User>(`${this.API_URL}/boutiques/${id}/approve`, {}, { headers: this.getHeaders() });
   }
 }

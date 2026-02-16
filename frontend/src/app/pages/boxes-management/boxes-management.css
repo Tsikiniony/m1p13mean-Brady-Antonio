@@ -1,0 +1,55 @@
+.boxes-container { padding: 20px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.add-btn { padding: 10px 15px; border: none; background: #2563eb; color: white; border-radius: 8px; cursor: pointer; }
+.table-container { background: white; border-radius: 10px; padding: 15px; }
+.boxes-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-item label {
+  font-weight: 700;
+  color: #111827;
+}
+
+.filter-item input,
+.filter-item select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+}
+
+.boxes-table th, .boxes-table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+.actions { display: flex; gap: 8px; }
+.btn-edit, .btn-delete { padding: 6px 10px; border: none; border-radius: 8px; cursor: pointer; }
+.btn-edit { background: #f59e0b; color: white; }
+.btn-delete { background: #ef4444; color: white; }
+.btn-delete.deleting { opacity: 0.7; cursor: not-allowed; }
+.loading { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 30px; }
+.spinner { width: 30px; height: 30px; border: 4px solid #e5e7eb; border-top-color: #2563eb; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.error-message { background: #fee2e2; color: #991b1b; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; }
+.modal { background: white; width: 520px; border-radius: 12px; overflow: hidden; }
+.modal-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; }
+.close-btn { border: none; background: transparent; font-size: 18px; cursor: pointer; }
+.modal-body { padding: 16px; }
+.form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
+.form-group input { padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; }
+.modal-footer { padding: 12px 16px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e5e7eb; }
+.btn-cancel { padding: 8px 12px; border: none; border-radius: 8px; background: #e5e7eb; cursor: pointer; }
+.btn-save { padding: 8px 12px; border: none; border-radius: 8px; background: #16a34a; color: white; cursor: pointer; }
