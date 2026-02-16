@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "boutique", "client"],
       default: "client"
     },
+    isApproved: {
+      type: Boolean,
+      default: function () {
+        return this.role !== "boutique";
+      }
+    },
     isActive: {
       type: Boolean,
       default: true

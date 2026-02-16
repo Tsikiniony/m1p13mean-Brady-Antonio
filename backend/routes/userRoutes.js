@@ -11,6 +11,11 @@ router.use(authorizeRoles("admin"));
 // GET all users
 router.get("/", userController.getAllUsers);
 
+// BOUTIQUES (admin)
+router.get("/boutiques/pending", userController.getPendingBoutiques);
+router.get("/boutiques/approved", userController.getApprovedBoutiques);
+router.put("/boutiques/:id/approve", userController.approveBoutique);
+
 // GET user by ID
 router.get("/:id", userController.getUserById);
 

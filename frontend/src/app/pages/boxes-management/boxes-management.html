@@ -1,0 +1,116 @@
+<div class="boxes-container">
+  <div class="header">
+    <h1>📦 Gestion des Box</h1>
+    <button class="add-btn" (click)="openAddModal()">➕ Ajouter un box</button>
+  </div>
+
+  <div class="error-message" *ngIf="error && !showModal">
+    {{ error }}
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement des box...</p>
+  </div>
+
+  <div class="filters" *ngIf="!loading">
+    <div class="filter-item">
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="searchName" placeholder="Rechercher..." />
+    </div>
+
+    <div class="filter-item">
+      <label>Loyer min</label>
+      <input type="number" [(ngModel)]="rentMin" placeholder="Min" min="0" />
+    </div>
+
+    <div class="filter-item">
+      <label>Loyer max</label>
+      <input type="number" [(ngModel)]="rentMax" placeholder="Max" min="0" />
+    </div>
+
+    <div class="filter-item">
+      <label>Status</label>
+      <select [(ngModel)]="statusFilter">
+        <option value="">Tous</option>
+        <option value="non prise">non prise</option>
+        <option value="prise">prise</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-container" *ngIf="!loading">
+    <table class="boxes-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Numéro</th>
+          <th>Loyer</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let box of filteredBoxes">
+        <tr class="box-row">
+          <td>{{ box.name }}</td>
+          <td>
+            <div class="box-number">{{ box.number }}</div>
+          </td>
+          <td>{{ box.rent }}</td>
+          <td>{{ getStatusLabel(box) }}</td>
+          <td>
+            <div class="actions">
+              <button class="btn-edit" (click)="openDetails(box)" [disabled]="isDeleting(box._id)">
+                🔎 Détails
+              </button>
+              <button class="btn-edit" (click)="openEditModal(box)" [disabled]="isDeleting(box._id)">
+                ✏️ Modifier
+              </button>
+              <button
+                class="btn-delete"
+                (click)="deleteBox(box._id)"
+                [disabled]="isDeleting(box._id)"
+                [class.deleting]="isDeleting(box._id)"
+              >
+                {{ isDeleting(box._id) ? '⏳ Suppression...' : '🗑️ Supprimer' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+        </ng-container>
+        <tr *ngIf="filteredBoxes.length === 0">
+          <td colspan="5" style="text-align: center; padding: 30px;">Aucun box trouvé</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? '✏️ Modifier un box' : '➕ Ajouter un box' }}</h2>
+      <button class="close-btn" (click)="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="error-message" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <div class="form-group">
+        <label>Loyer</label>
+        <input type="number" [(ngModel)]="currentBox.rent" placeholder="Ex: 100000" min="0" required />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()" [disabled]="savingBox">Annuler</button>
+      <button class="btn-save" (click)="saveBox()" [disabled]="savingBox">
+        <span *ngIf="!savingBox">{{ isEditMode ? '💾 Enregistrer' : '➕ Créer' }}</span>
+        <span *ngIf="savingBox">⏳ Enregistrement...</span>
+      </button>
+    </div>
+  </div>
+</div>
