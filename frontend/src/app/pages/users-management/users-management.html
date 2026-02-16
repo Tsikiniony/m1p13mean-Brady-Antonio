@@ -1,0 +1,136 @@
+<div class="users-container">
+  <div class="header">
+    <h1>👥 Gestion des Utilisateurs</h1>
+    <button class="add-btn" (click)="openAddModal()">➕ Ajouter un utilisateur</button>
+  </div>
+
+  <div class="error-message" *ngIf="error && !showModal">
+    {{error}}
+  </div>
+
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-value">{{totalUsers}}</div>
+      <div class="stat-label">Total Utilisateurs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{adminCount}}</div>
+      <div class="stat-label">Admins</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{activeCount}}</div>
+      <div class="stat-label">Actifs</div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement des utilisateurs...</p>
+  </div>
+
+  <div class="table-container" *ngIf="!loading">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users" class="user-row">
+          <td>
+            <div class="user-name">{{user.name}}</div>
+          </td>
+          <td>{{user.email}}</td>
+          <td>
+            <span class="badge" [class.admin]="user.role === 'admin'" [class.boutique]="user.role === 'boutique'">
+              {{user.role}}
+            </span>
+          </td>
+          <td>
+            <span class="status" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+              {{getStatusLabel(user.isActive)}}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <button class="btn-edit" (click)="openEditModal(user)" [disabled]="isDeleting(user._id)">
+                ✏️ Modifier
+              </button>
+              <button 
+                class="btn-delete" 
+                (click)="deleteUser(user._id)" 
+                [disabled]="isDeleting(user._id)"
+                [class.deleting]="isDeleting(user._id)">
+                {{isDeleting(user._id) ? '⏳ Suppression...' : '🗑️ Supprimer'}}
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0">
+          <td colspan="5" style="text-align: center; padding: 30px;">
+            Aucun utilisateur trouvé
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{isEditMode ? '✏️ Modifier un utilisateur' : '➕ Ajouter un utilisateur'}}</h2>
+      <button class="close-btn" (click)="closeModal()">✕</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-message" *ngIf="error">
+        {{error}}
+      </div>
+
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="currentUser.name" placeholder="Nom complet" required>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="currentUser.email" placeholder="email@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label>Mot de passe {{isEditMode ? '(laisser vide pour ne pas changer)' : ''}}</label>
+        <input type="password" [(ngModel)]="currentUser.password" placeholder="••••••••" [required]="!isEditMode">
+      </div>
+
+      <div class="form-group">
+        <label>Rôle</label>
+        <select [(ngModel)]="currentUser.role">
+          <option value="client">Client</option>
+          <option value="boutique">Boutique</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="currentUser.isActive">
+          Actif
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()" [disabled]="savingUser">Annuler</button>
+      <button class="btn-save" (click)="saveUser()" [disabled]="savingUser">
+        <span *ngIf="!savingUser">{{isEditMode ? '💾 Enregistrer' : '➕ Créer'}}</span>
+        <span *ngIf="savingUser">⏳ Enregistrement...</span>
+      </button>
+    </div>
+  </div>
+</div>

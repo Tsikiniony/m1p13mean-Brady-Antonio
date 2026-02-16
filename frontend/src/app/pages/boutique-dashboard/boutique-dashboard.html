@@ -1,15 +1,46 @@
-<h1>Bienvenue sur votre espace Boutique 🏪</h1>
+<div class="boutique-container">
+  <div class="header">
+    <h1>🏪 Gestion de la Boutique</h1>
+  </div>
 
-<nav>
-  <a routerLink="/login">Se déconnecter</a>
-</nav>
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-value">42</div>
+      <div class="stat-label">Produits</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">18</div>
+      <div class="stat-label">Commandes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">3</div>
+      <div class="stat-label">En attente</div>
+    </div>
+  </div>
 
-<section>
-  <h2>Gestion des produits</h2>
-  <p>(CRUD des produits + promotions)</p>
-</section>
+  <div class="sections">
+    <section class="dashboard-card">
+      <h2>📦 Gestion des produits</h2>
+      <p>Gérez votre catalogue de produits, ajoutez de nouveaux articles et configurez vos promotions.</p>
+      <button class="action-btn">Voir les produits</button>
+    </section>
 
-<section>
-  <h2>Commandes récentes</h2>
-  <p>(Afficher les commandes reçues pour votre boutique)</p>
-</section>
+    <section class="dashboard-card">
+      <h2>🛒 Commandes récentes</h2>
+      <p>Consultez et gérez les commandes reçues pour votre boutique en temps réel.</p>
+      <button class="action-btn">Voir les commandes</button>
+    </section>
+
+    <section class="dashboard-card">
+      <h2>📊 Statistiques de vente</h2>
+      <p>Analysez les performances de votre boutique avec des graphiques détaillés.</p>
+      <button class="action-btn">Voir les stats</button>
+    </section>
+
+    <section class="dashboard-card">
+      <h2>💰 Promotions</h2>
+      <p>Créez et gérez vos offres spéciales et codes promo pour attirer plus de clients.</p>
+      <button class="action-btn">Gérer les promos</button>
+    </section>
+  </div>
+</div>
