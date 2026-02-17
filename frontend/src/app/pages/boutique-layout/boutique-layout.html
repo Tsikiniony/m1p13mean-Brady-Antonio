@@ -1,10 +1,10 @@
 <div class="layout">
   <nav class="navbar">
     <div class="brand">🏪 Boutique</div>
-    <div class="links">
-      <a routerLink="/boutique/boutiques" routerLinkActive="active" class="nav-link">Mes boutiques</a>
-      <a routerLink="/boutique/demande-box" routerLinkActive="active" class="nav-link">Demande Box</a>
-    </div>
+    <a routerLink="/boutique/boutiques" class="nav-link">Mes boutiques</a>
+    <a routerLink="/boutique/demande-box" class="nav-link">Demander une box</a>
+    <a routerLink="/boutique/history" class="nav-link">Mon historique</a>
+    <button class="logout-btn" (click)="logout()">Déconnexion</button>
   </nav>
 
   <div class="content">

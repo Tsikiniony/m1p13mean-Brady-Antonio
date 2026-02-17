@@ -10,6 +10,12 @@ export interface Box {
   rent: number;
   status?: 'prise' | 'non prise';
   rentExpiresAt?: string | null;
+  requests?: Array<{
+    _id?: string;
+    boutique: string;
+    status: 'pending' | 'approved' | 'rejected';
+    createdAt?: string;
+  }>;
   boutique?:
     | string
     | null
@@ -48,7 +54,9 @@ export interface PendingBoxRequest {
               email?: string;
             };
       };
+  status: 'pending' | 'approved' | 'rejected';
   createdAt?: string;
+  decidedAt?: string | null;
 }
 
 export type CreateBoxPayload = {
@@ -89,6 +97,10 @@ export class BoxService {
     return this.http.get<Box[]>(`${this.API_URL}/public`);
   }
 
+  getBoxesForRequest(): Observable<Box[]> {
+    return this.http.get<Box[]>(`${this.API_URL}/for-request`, { headers: this.getHeaders() });
+  }
+
   getPublicBoxById(id: string): Observable<Box> {
     return this.http.get<Box>(`${this.API_URL}/public/${id}`);
   }
@@ -119,6 +131,10 @@ export class BoxService {
 
   getPendingRequests(): Observable<PendingBoxRequest[]> {
     return this.http.get<PendingBoxRequest[]>(`${this.API_URL}/requests/pending`, { headers: this.getHeaders() });
+  }
+
+  getMyRequestsHistory(): Observable<PendingBoxRequest[]> {
+    return this.http.get<PendingBoxRequest[]>(`${this.API_URL}/requests/my-history`, { headers: this.getHeaders() });
   }
 
   approveRequest(boxId: string, requestId: string): Observable<Box> {

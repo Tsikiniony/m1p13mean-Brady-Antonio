@@ -1,0 +1,7 @@
+:host{display:block}
+.page{max-width:1100px;margin:0 auto}
+.card{background:#fff;border-radius:12px;padding:16px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.back{text-decoration:none;color:#667eea;font-weight:700}
+.error{background:#ffe5e5;color:#b00020;padding:10px;border-radius:10px;margin:12px 0}
+.loading{margin:12px 0}

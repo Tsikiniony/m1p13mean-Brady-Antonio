@@ -24,8 +24,33 @@ const boxSchema = new mongoose.Schema(
     },
     boutique: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Boutique",
       default: null
+    },
+    requests: {
+      type: [
+        {
+          boutique: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Boutique",
+            required: true
+          },
+          status: {
+            type: String,
+            enum: ["pending", "approved", "rejected"],
+            default: "pending"
+          },
+          decidedAt: {
+            type: Date,
+            default: null
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now
+          }
+        }
+      ],
+      default: []
     }
   },
   { timestamps: true }

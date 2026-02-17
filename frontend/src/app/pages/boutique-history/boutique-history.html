@@ -1,0 +1,53 @@
+<div class="page">
+  <h1>Mon historique de demandes</h1>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <section class="card">
+    <div class="filters">
+      <label>Filtrer</label>
+      <select [(ngModel)]="filter" (change)="loadHistory()">
+        <option value="all">Toutes</option>
+        <option value="approved">Validées</option>
+        <option value="rejected">Refusées</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="card" *ngIf="!loading">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Box</th>
+          <th>Boutique</th>
+          <th>Statut</th>
+          <th>Demande</th>
+          <th>Décision</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let h of filteredHistory">
+          <td>{{ h.boxName || '-' }} ({{ h.boxNumber || '-' }})</td>
+          <td>
+            <span *ngIf="h.boutique && typeof h.boutique === 'object'">
+              {{ h.boutique.name }}
+            </span>
+            <span *ngIf="!h.boutique || typeof h.boutique === 'string'">
+              {{ h.boutique || '-' }}
+            </span>
+          </td>
+          <td>
+            <span [class]="statusClass(h.status)">{{ statusLabel(h.status) }}</span>
+          </td>
+          <td>{{ formatDate(h.createdAt) }}</td>
+          <td>{{ formatDate(h.decidedAt) }}</td>
+        </tr>
+        <tr *ngIf="filteredHistory.length === 0">
+          <td colspan="5" style="text-align:center;padding:12px;">Aucune demande</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+</div>

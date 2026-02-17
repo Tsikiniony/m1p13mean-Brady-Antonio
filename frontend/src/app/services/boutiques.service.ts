@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Box } from './box.service';
 
 export interface BoutiqueOwner {
   _id?: string;
@@ -59,6 +60,14 @@ export class BoutiquesService {
 
   listMineWithBoxFlag(): Observable<BoutiqueWithBoxFlag[]> {
     return this.http.get<BoutiqueWithBoxFlag[]>(`${this.API_URL}/with-box-flag`, { headers: this.getHeaders() });
+  }
+
+  getMineById(id: string): Observable<Boutique> {
+    return this.http.get<Boutique>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
+  }
+
+  getMineBox(id: string): Observable<Box | null> {
+    return this.http.get<Box | null>(`${this.API_URL}/${id}/box`, { headers: this.getHeaders() });
   }
 
   create(payload: CreateBoutiquePayload): Observable<Boutique> {

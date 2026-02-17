@@ -40,6 +40,7 @@
           <th>Nom</th>
           <th>Catégorie</th>
           <th>Box</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -51,9 +52,12 @@
               {{ b.hasBox ? 'Oui' : 'Non' }}
             </span>
           </td>
+          <td>
+            <a class="link" [routerLink]="['/boutique/boutiques', b._id]">Détails</a>
+          </td>
         </tr>
         <tr *ngIf="filteredBoutiques.length === 0">
-          <td colspan="3" style="text-align:center;padding:12px;">Aucune boutique</td>
+          <td colspan="4" style="text-align:center;padding:12px;">Aucune boutique</td>
         </tr>
       </tbody>
     </table>

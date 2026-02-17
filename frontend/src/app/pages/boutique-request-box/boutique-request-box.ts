@@ -63,7 +63,7 @@ export class BoutiqueRequestBoxComponent implements OnInit {
     this.error = '';
     this.info = '';
 
-    this.boxService.getPublicBoxes().subscribe({
+    this.boxService.getBoxesForRequest().subscribe({
       next: (boxes) => {
         this.boxes = boxes || [];
         this.loading = false;
@@ -91,6 +91,10 @@ export class BoutiqueRequestBoxComponent implements OnInit {
     if (!box._id) return;
     if (!this.selectedBoutiqueId) {
       this.error = 'Choisis une boutique';
+      return;
+    }
+
+    if (this.hasPendingRequestForSelectedBoutique(box)) {
       return;
     }
 
@@ -122,5 +126,28 @@ export class BoutiqueRequestBoxComponent implements OnInit {
 
   isRequesting(boxId: string | undefined): boolean {
     return !!boxId && boxId === this.requestingBoxId;
+  }
+
+  hasPendingRequestForSelectedBoutique(box: Box): boolean {
+    if (!this.selectedBoutiqueId) return false;
+    const requests = Array.isArray(box.requests) ? box.requests : [];
+    return requests.some(
+      (r) => String(r.boutique) === String(this.selectedBoutiqueId) && r.status === 'pending'
+    );
+  }
+
+  getButtonLabel(box: Box): string {
+    if (this.isRequesting(box._id)) return 'Demande...';
+    if (this.hasPendingRequestForSelectedBoutique(box)) return 'Demande en cours';
+    return 'Demander';
+  }
+
+  isButtonDisabled(box: Box): boolean {
+    return (
+      this.isRequesting(box._id) ||
+      this.hasPendingRequestForSelectedBoutique(box) ||
+      !this.selectedBoutiqueId ||
+      (this.selectedBoutique?.hasBox ?? false)
+    );
   }
 }
