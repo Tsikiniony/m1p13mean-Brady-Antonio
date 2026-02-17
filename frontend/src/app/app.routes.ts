@@ -5,6 +5,8 @@ import { BoutiqueDashboardComponent } from './pages/boutique-dashboard/boutique-
 import { BoutiqueLayoutComponent } from './pages/boutique-layout/boutique-layout';
 import { BoutiqueBoutiquesListComponent } from './pages/boutique-boutiques-list/boutique-boutiques-list';
 import { BoutiqueRequestBoxComponent } from './pages/boutique-request-box/boutique-request-box';
+import { BoutiqueBoutiqueDetailsComponent } from './pages/boutique-boutique-details/boutique-boutique-details';
+import { BoutiqueHistoryComponent } from './pages/boutique-history/boutique-history';
 import { UsersManagementComponent } from './pages/users-management/users-management';
 import { BoxesManagementComponent } from './pages/boxes-management/boxes-management';
 import { BoxDetailsComponent } from './pages/box-details/box-details';
@@ -22,7 +24,9 @@ export const routes: Routes = [
     component: BoutiqueLayoutComponent,
     children: [
       { path: 'boutiques', component: BoutiqueBoutiquesListComponent },
+      { path: 'boutiques/:id', component: BoutiqueBoutiqueDetailsComponent },
       { path: 'demande-box', component: BoutiqueRequestBoxComponent },
+      { path: 'history', component: BoutiqueHistoryComponent },
       { path: '', redirectTo: 'boutiques', pathMatch: 'full' }
     ]
   },

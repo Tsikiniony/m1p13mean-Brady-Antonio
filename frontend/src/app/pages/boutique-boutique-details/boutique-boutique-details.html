@@ -1,0 +1,29 @@
+<div class="page">
+  <a class="back" routerLink="/boutique/boutiques">← Retour</a>
+
+  <h1>Détails boutique</h1>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="loading" *ngIf="loading">Chargement...</div>
+
+  <section class="card" *ngIf="!loading && boutique">
+    <h2>Informations</h2>
+    <div class="grid">
+      <div><strong>Nom</strong><div>{{ boutique.name }}</div></div>
+      <div><strong>Catégorie</strong><div>{{ boutique.category || '-' }}</div></div>
+    </div>
+  </section>
+
+  <section class="card" *ngIf="!loading">
+    <h2>Box associée</h2>
+
+    <div *ngIf="!box" style="padding: 10px 0;">Aucune box associée à cette boutique.</div>
+
+    <div *ngIf="box" class="grid">
+      <div><strong>Nom</strong><div>{{ box.name }}</div></div>
+      <div><strong>Numéro</strong><div>{{ box.number }}</div></div>
+      <div><strong>Loyer</strong><div>{{ box.rent }}</div></div>
+      <div><strong>Status</strong><div>{{ getBoxStatusLabel() }}</div></div>
+    </div>
+  </section>
+</div>

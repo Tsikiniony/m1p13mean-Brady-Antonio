@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { BoutiqueWithBoxFlag, BoutiquesService } from '../../services/boutiques.service';
 
 @Component({
   selector: 'app-boutique-boutiques-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './boutique-boutiques-list.html',
   styleUrl: './boutique-boutiques-list.css'
 })

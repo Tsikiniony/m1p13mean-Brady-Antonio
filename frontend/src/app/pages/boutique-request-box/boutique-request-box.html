@@ -40,8 +40,8 @@
           <td>{{ box.number }}</td>
           <td>{{ box.rent }}</td>
           <td>
-            <button class="btn" (click)="requestBox(box)" [disabled]="isRequesting(box._id) || !selectedBoutiqueId || (selectedBoutique?.hasBox ?? false)">
-              {{ isRequesting(box._id) ? 'Demande...' : 'Demander' }}
+            <button class="btn" (click)="requestBox(box)" [disabled]="isButtonDisabled(box)">
+              {{ getButtonLabel(box) }}
             </button>
           </td>
         </tr>
