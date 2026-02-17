@@ -1,0 +1,31 @@
+<div class="register-container">
+  <h2>📝 Inscription Client</h2>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="form-group">
+    <input type="text" [(ngModel)]="name" placeholder="👤 Votre nom" />
+  </div>
+
+  <div class="form-group">
+    <input type="email" [(ngModel)]="email" placeholder="📧 Votre email" />
+  </div>
+
+  <div class="form-group">
+    <input type="password" [(ngModel)]="password" placeholder="🔒 Mot de passe" />
+  </div>
+
+  <div class="form-group">
+    <input type="password" [(ngModel)]="confirmPassword" placeholder="🔒 Confirmer mot de passe" />
+  </div>
+
+  <button (click)="onRegister()" [disabled]="loading">
+    {{ loading ? 'Inscription...' : "S'inscrire" }}
+  </button>
+
+  <div class="links">
+    <a routerLink="/login">Déjà un compte ? Se connecter</a>
+  </div>
+</div>

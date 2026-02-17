@@ -107,7 +107,16 @@ export class AdminBoxDetailsComponent implements OnInit, OnDestroy {
   getBoutiqueLabel(): string {
     if (!this.box || !this.box.boutique) return '-';
     if (typeof this.box.boutique === 'object') {
-      return `${this.box.boutique.name} (${this.box.boutique.email})`;
+      let ownerEmail = '';
+      if (
+        this.box.boutique.owner &&
+        typeof this.box.boutique.owner === 'object' &&
+        this.box.boutique.owner.email
+      ) {
+        ownerEmail = this.box.boutique.owner.email;
+      }
+      const ownerPart = ownerEmail ? ` (${ownerEmail})` : '';
+      return `${this.box.boutique.name}${ownerPart}`;
     }
     return String(this.box.boutique);
   }

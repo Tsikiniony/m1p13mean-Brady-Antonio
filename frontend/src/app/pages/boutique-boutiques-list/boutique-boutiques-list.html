@@ -1,0 +1,61 @@
+<div class="page">
+  <h1>Mes boutiques</h1>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <section class="card">
+    <h2>Créer une boutique</h2>
+
+    <div class="row">
+      <label>Nom</label>
+      <input [(ngModel)]="newName" placeholder="Nom de la boutique" />
+    </div>
+
+    <div class="row">
+      <label>Catégorie</label>
+      <select [(ngModel)]="newCategory">
+        <option [ngValue]="null">Choisir...</option>
+        <option *ngFor="let c of categories" [ngValue]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <button class="btn" (click)="create()" [disabled]="creating">{{ creating ? 'Création...' : 'Créer' }}</button>
+  </section>
+
+  <section class="card">
+    <div class="filters">
+      <label>Filtre</label>
+      <select [(ngModel)]="filter">
+        <option value="all">Toutes</option>
+        <option value="withBox">Avec box</option>
+        <option value="withoutBox">Sans box</option>
+      </select>
+    </div>
+
+    <div class="loading" *ngIf="loading">Chargement...</div>
+
+    <table class="table" *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Catégorie</th>
+          <th>Box</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let b of filteredBoutiques">
+          <td>{{ b.name }}</td>
+          <td>{{ b.category || '-' }}</td>
+          <td>
+            <span [class.ok]="b.hasBox" [class.ko]="!b.hasBox">
+              {{ b.hasBox ? 'Oui' : 'Non' }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="filteredBoutiques.length === 0">
+          <td colspan="3" style="text-align:center;padding:12px;">Aucune boutique</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>

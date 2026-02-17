@@ -17,6 +17,10 @@ export class AuthService {
     return this.http.post(`${this.API_URL}/login`, data);
   }
 
+  register(data: any) {
+    return this.http.post(`${this.API_URL}/register`, data);
+  }
+
   saveToken(token: string) {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('token', token);

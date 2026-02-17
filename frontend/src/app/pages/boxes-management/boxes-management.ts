@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BoxService, Box } from '../../services/box.service';
+import { BoxService, Box, PendingBoxRequest } from '../../services/box.service';
 import { finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -14,6 +14,10 @@ import { Router } from '@angular/router';
 })
 export class BoxesManagementComponent implements OnInit {
   boxes: Box[] = [];
+
+  pendingRequests: PendingBoxRequest[] = [];
+  loadingRequests = false;
+  handlingRequestId: string | null = null;
 
   searchName = '';
   rentMin: number | null = null;
@@ -41,6 +45,7 @@ export class BoxesManagementComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => {
         this.loadBoxes();
+        this.loadPendingRequests();
       });
     }
   }
@@ -68,6 +73,90 @@ export class BoxesManagementComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  loadPendingRequests() {
+    this.loadingRequests = true;
+
+    this.boxService.getPendingRequests().subscribe({
+      next: (requests) => {
+        this.pendingRequests = requests;
+        this.loadingRequests = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        this.loadingRequests = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  approvePendingRequest(req: PendingBoxRequest) {
+    this.handlingRequestId = req.requestId;
+    this.error = '';
+
+    this.boxService
+      .approveRequest(req.boxId, req.requestId)
+      .pipe(
+        finalize(() => {
+          this.handlingRequestId = null;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.loadBoxes();
+          this.loadPendingRequests();
+        },
+        error: (err) => {
+          this.error = err.error?.message || err.error?.error || 'Erreur lors de la validation';
+          console.error(err);
+        }
+      });
+  }
+
+  rejectPendingRequest(req: PendingBoxRequest) {
+    this.handlingRequestId = req.requestId;
+    this.error = '';
+
+    this.boxService
+      .rejectRequest(req.boxId, req.requestId)
+      .pipe(
+        finalize(() => {
+          this.handlingRequestId = null;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.loadPendingRequests();
+        },
+        error: (err) => {
+          this.error = err.error?.message || err.error?.error || 'Erreur lors du refus';
+          console.error(err);
+        }
+      });
+  }
+
+  isHandlingRequest(id: string | undefined): boolean {
+    return !!id && id === this.handlingRequestId;
+  }
+
+  getRequestBoutiqueLabel(req: PendingBoxRequest): string {
+    if (!req?.boutique) return '-';
+    if (typeof req.boutique === 'object') {
+      const cat = req.boutique.category ? ` - ${req.boutique.category}` : '';
+
+      let ownerEmail = '';
+      if (req.boutique.owner && typeof req.boutique.owner === 'object' && req.boutique.owner.email) {
+        ownerEmail = req.boutique.owner.email;
+      }
+
+      const ownerPart = ownerEmail ? ` (${ownerEmail})` : '';
+      return `${req.boutique.name}${ownerPart}${cat}`;
+    }
+    return String(req.boutique);
   }
 
   openAddModal() {

@@ -16,11 +16,39 @@ export interface Box {
     | {
         _id: string;
         name: string;
-        email: string;
-        role: string;
+        category?: string | null;
+        owner?:
+          | string
+          | {
+              _id?: string;
+              name?: string;
+              email?: string;
+            };
       };
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface PendingBoxRequest {
+  boxId: string;
+  boxName?: string;
+  boxNumber?: number;
+  requestId: string;
+  boutique:
+    | string
+    | {
+        _id: string;
+        name: string;
+        category?: string | null;
+        owner?:
+          | string
+          | {
+              _id?: string;
+              name?: string;
+              email?: string;
+            };
+      };
+  createdAt?: string;
 }
 
 export type CreateBoxPayload = {
@@ -81,8 +109,16 @@ export class BoxService {
     return this.http.delete(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
 
-  requestBox(boxId: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/${boxId}/request`, {}, { headers: this.getHeaders() });
+  requestBox(boxId: string, boutiqueId: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/${boxId}/request`,
+      { boutiqueId },
+      { headers: this.getHeaders() }
+    );
+  }
+
+  getPendingRequests(): Observable<PendingBoxRequest[]> {
+    return this.http.get<PendingBoxRequest[]>(`${this.API_URL}/requests/pending`, { headers: this.getHeaders() });
   }
 
   approveRequest(boxId: string, requestId: string): Observable<Box> {

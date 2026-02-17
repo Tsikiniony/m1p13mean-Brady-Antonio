@@ -1,0 +1,56 @@
+<div class="page">
+  <h1>Demande d'allocation de box</h1>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="info" *ngIf="info">{{ info }}</div>
+
+  <section class="card">
+    <h2>Choisir une boutique</h2>
+
+    <div class="row">
+      <label>Boutique</label>
+      <select [(ngModel)]="selectedBoutiqueId" [disabled]="loadingBoutiques">
+        <option [ngValue]="null">Choisir...</option>
+        <option *ngFor="let b of boutiques" [ngValue]="b._id" [disabled]="b.hasBox">
+          {{ b.name }}{{ b.hasBox ? ' (déjà une box)' : '' }}
+        </option>
+      </select>
+    </div>
+
+    <div class="hint" *ngIf="selectedBoutique && selectedBoutique.hasBox">
+      Cette boutique a déjà une box, tu ne peux pas demander une nouvelle allocation.
+    </div>
+  </section>
+
+  <section class="card" *ngIf="!loading">
+    <h2>Boxes disponibles</h2>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Numéro</th>
+          <th>Loyer</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let box of availableBoxes">
+          <td>{{ box.name }}</td>
+          <td>{{ box.number }}</td>
+          <td>{{ box.rent }}</td>
+          <td>
+            <button class="btn" (click)="requestBox(box)" [disabled]="isRequesting(box._id) || !selectedBoutiqueId || (selectedBoutique?.hasBox ?? false)">
+              {{ isRequesting(box._id) ? 'Demande...' : 'Demander' }}
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="availableBoxes.length === 0">
+          <td colspan="4" style="text-align:center;padding:12px;">Aucune box disponible</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+</div>
