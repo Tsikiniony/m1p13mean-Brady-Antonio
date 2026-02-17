@@ -3,44 +3,109 @@
     <h1>🏪 Gestion de la Boutique</h1>
   </div>
 
-  <div class="stats-cards">
-    <div class="stat-card">
-      <div class="stat-value">42</div>
-      <div class="stat-label">Produits</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">18</div>
-      <div class="stat-label">Commandes</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">3</div>
-      <div class="stat-label">En attente</div>
-    </div>
+  <div class="error-message" *ngIf="error">
+    {{ error }}
   </div>
 
-  <div class="sections">
-    <section class="dashboard-card">
-      <h2>📦 Gestion des produits</h2>
-      <p>Gérez votre catalogue de produits, ajoutez de nouveaux articles et configurez vos promotions.</p>
-      <button class="action-btn">Voir les produits</button>
-    </section>
-
-    <section class="dashboard-card">
-      <h2>🛒 Commandes récentes</h2>
-      <p>Consultez et gérez les commandes reçues pour votre boutique en temps réel.</p>
-      <button class="action-btn">Voir les commandes</button>
-    </section>
-
-    <section class="dashboard-card">
-      <h2>📊 Statistiques de vente</h2>
-      <p>Analysez les performances de votre boutique avec des graphiques détaillés.</p>
-      <button class="action-btn">Voir les stats</button>
-    </section>
-
-    <section class="dashboard-card">
-      <h2>💰 Promotions</h2>
-      <p>Créez et gérez vos offres spéciales et codes promo pour attirer plus de clients.</p>
-      <button class="action-btn">Gérer les promos</button>
-    </section>
+  <div class="info-message" *ngIf="info">
+    {{ info }}
   </div>
+
+  <section class="dashboard-card">
+    <h2>➕ Créer une boutique</h2>
+
+    <div class="form-row">
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="newBoutiqueName" placeholder="Nom de la boutique" />
+    </div>
+
+    <div class="form-row">
+      <label>Catégorie</label>
+      <select [(ngModel)]="newBoutiqueCategory">
+        <option [ngValue]="null">Choisir...</option>
+        <option *ngFor="let c of categories" [ngValue]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <button class="action-btn" (click)="createBoutique()" [disabled]="creatingBoutique">
+      {{ creatingBoutique ? 'Création...' : 'Créer' }}
+    </button>
+  </section>
+
+  <section class="dashboard-card" style="margin-top: 20px;">
+    <h2>🏪 Boutique active</h2>
+
+    <div class="form-row">
+      <label>Sélection</label>
+      <select [(ngModel)]="selectedBoutiqueId" (ngModelChange)="onSelectedBoutiqueChange()">
+        <option [ngValue]="null">Choisir...</option>
+        <option *ngFor="let b of boutiques" [ngValue]="b._id">{{ b.name }}</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="dashboard-card" style="margin-top: 20px;">
+    <h2>📝 Profil Boutique</h2>
+
+    <div *ngIf="!selectedBoutiqueId" style="padding: 12px 0;">
+      Sélectionne une boutique pour modifier son profil.
+    </div>
+
+    <div class="form-row">
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="profileName" placeholder="Nom de la boutique" />
+    </div>
+
+    <div class="form-row">
+      <label>Catégorie</label>
+      <select [(ngModel)]="profileCategory">
+        <option [ngValue]="null">Choisir...</option>
+        <option *ngFor="let c of categories" [ngValue]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <button class="action-btn" (click)="saveProfile()" [disabled]="savingProfile">
+      {{ savingProfile ? 'Enregistrement...' : 'Enregistrer' }}
+    </button>
+  </section>
+
+  <section class="dashboard-card" style="margin-top: 20px;" *ngIf="!loading">
+    <h2>📦 Demande d'allocation de Box</h2>
+    <p>Sélectionne une box disponible puis envoie une demande. L'admin devra valider.</p>
+
+    <div class="table-container">
+      <table class="boxes-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Numéro</th>
+            <th>Loyer</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let box of availableBoxes">
+            <td>{{ box.name }}</td>
+            <td>{{ box.number }}</td>
+            <td>{{ box.rent }}</td>
+            <td>
+              <button class="action-btn" (click)="requestBox(box)" [disabled]="isRequesting(box._id)">
+                {{ isRequesting(box._id) ? 'Demande...' : 'Demander' }}
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="availableBoxes.length === 0">
+            <td colspan="4" style="text-align:center; padding: 16px;">Aucune box disponible</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
 </div>

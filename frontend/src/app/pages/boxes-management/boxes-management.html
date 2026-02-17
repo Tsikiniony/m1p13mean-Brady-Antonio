@@ -40,6 +40,45 @@
   </div>
 
   <div class="table-container" *ngIf="!loading">
+    <h2 style="margin: 0 0 12px 0;">🕒 Demandes d'allocation en attente</h2>
+
+    <div class="loading" *ngIf="loadingRequests">
+      <div class="spinner"></div>
+      <p>Chargement des demandes...</p>
+    </div>
+
+    <table class="boxes-table" *ngIf="!loadingRequests">
+      <thead>
+        <tr>
+          <th>Box</th>
+          <th>Boutique</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of pendingRequests">
+          <td>{{ r.boxName || ('B' + r.boxNumber) }}</td>
+          <td>{{ getRequestBoutiqueLabel(r) }}</td>
+          <td>
+            <div class="actions">
+              <button class="btn-edit" (click)="approvePendingRequest(r)" [disabled]="isHandlingRequest(r.requestId)">
+                {{ isHandlingRequest(r.requestId) ? '⏳ ...' : '✅ Valider' }}
+              </button>
+              <button class="btn-delete" (click)="rejectPendingRequest(r)" [disabled]="isHandlingRequest(r.requestId)">
+                {{ isHandlingRequest(r.requestId) ? '⏳ ...' : '❌ Refuser' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="pendingRequests.length === 0">
+          <td colspan="3" style="text-align: center; padding: 16px;">Aucune demande en attente</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-container" *ngIf="!loading">
     <table class="boxes-table">
       <thead>
         <tr>

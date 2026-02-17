@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -39,8 +40,9 @@ export class Login {
             alert('Rôle inconnu');
         }
 
-      }, err => {
-        alert('Email ou mot de passe incorrect');
+      }, (err: any) => {
+        const msg = err?.error?.message || err?.error?.error || 'Email ou mot de passe incorrect';
+        alert(msg);
       });
   }
 

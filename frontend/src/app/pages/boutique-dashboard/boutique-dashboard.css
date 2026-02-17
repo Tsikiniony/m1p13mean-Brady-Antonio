@@ -143,6 +143,58 @@
   box-shadow: 0 6px 20px rgba(240, 147, 251, 0.5);
 }
 
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form-row label {
+  font-weight: 700;
+  color: #333;
+}
+
+.form-row input,
+.form-row select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+}
+
+.table-container {
+  margin-top: 12px;
+  overflow: auto;
+}
+
+.boxes-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.boxes-table th,
+.boxes-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.error-message {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.info-message {
+  background: #dcfce7;
+  color: #166534;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
