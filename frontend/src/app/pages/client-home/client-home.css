@@ -1,3 +1,17 @@
 .client-home {
   padding: 20px;
 }
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #111827;
+  background:#111827;
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+}
+.btn:hover{opacity:.92}

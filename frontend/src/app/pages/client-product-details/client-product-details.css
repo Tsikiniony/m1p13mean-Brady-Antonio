@@ -1,0 +1,16 @@
+.page{padding:24px;max-width:1000px;margin:0 auto}
+.back{display:inline-block;margin-bottom:12px;color:#2563eb;text-decoration:none}
+.back:hover{text-decoration:underline}
+.loading{padding:12px 0;color:#6b7280}
+.error{background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:10px 12px;border-radius:10px}
+.wrap{display:grid;gap:16px}
+.hero{aspect-ratio:16/9;background:#f3f4f6;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.title{margin:0;font-size:28px;font-weight:900;letter-spacing:-.02em}
+.boutique{margin-top:6px;color:#6b7280}
+.cat{color:#9ca3af}
+.price{font-size:22px;font-weight:900;white-space:nowrap}
+.desc{margin-top:12px;color:#374151;line-height:1.5}
+@media (max-width: 640px){.page{padding:16px}.top{flex-direction:column;align-items:flex-start}.price{font-size:20px}}

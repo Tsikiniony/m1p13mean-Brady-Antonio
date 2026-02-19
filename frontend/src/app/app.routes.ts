@@ -13,12 +13,16 @@ import { BoxDetailsComponent } from './pages/box-details/box-details';
 import { AdminBoxDetailsComponent } from './pages/admin-box-details/admin-box-details';
 import { AdminHomeComponent } from './pages/admin-home/admin-home';
 import { ClientHomeComponent } from './pages/client-home/client-home';
+import { ClientProductsComponent } from './pages/client-products/client-products';
+import { ClientProductDetailsComponent } from './pages/client-product-details/client-product-details';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'client', component: ClientHomeComponent },
+  { path: 'client/products', component: ClientProductsComponent },
+  { path: 'client/products/:id', component: ClientProductDetailsComponent },
   {
     path: 'boutique',
     component: BoutiqueLayoutComponent,
