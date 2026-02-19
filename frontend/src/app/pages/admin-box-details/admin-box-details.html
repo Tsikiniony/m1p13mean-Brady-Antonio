@@ -13,6 +13,13 @@
 </div>
 
 <div class="card" *ngIf="!loading && box">
+  <div class="row" *ngIf="box.image">
+    <div class="label">Photo</div>
+    <div class="value">
+      <img [src]="box.image" alt="" style="max-width: 320px; border-radius: 10px; border: 1px solid #e5e7eb;" />
+    </div>
+  </div>
+
   <div class="row">
     <div class="label">Nom</div>
     <div class="value">{{ box.name }}</div>
@@ -31,6 +38,11 @@
   <div class="row">
     <div class="label">Status</div>
     <div class="value">{{ getStatusLabel() }}</div>
+  </div>
+
+  <div class="row" *ngIf="box.description">
+    <div class="label">Description</div>
+    <div class="value">{{ box.description }}</div>
   </div>
 
 </div>

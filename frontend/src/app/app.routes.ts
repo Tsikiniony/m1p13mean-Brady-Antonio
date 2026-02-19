@@ -7,6 +7,8 @@ import { BoutiqueBoutiquesListComponent } from './pages/boutique-boutiques-list/
 import { BoutiqueRequestBoxComponent } from './pages/boutique-request-box/boutique-request-box';
 import { BoutiqueBoutiqueDetailsComponent } from './pages/boutique-boutique-details/boutique-boutique-details';
 import { BoutiqueHistoryComponent } from './pages/boutique-history/boutique-history';
+import { BoutiqueBoxDetailsComponent } from './pages/boutique-box-details/boutique-box-details';
+import { BoutiqueRentsComponent } from './pages/boutique-rents/boutique-rents';
 import { UsersManagementComponent } from './pages/users-management/users-management';
 import { BoxesManagementComponent } from './pages/boxes-management/boxes-management';
 import { BoxDetailsComponent } from './pages/box-details/box-details';
@@ -29,7 +31,9 @@ export const routes: Routes = [
     children: [
       { path: 'boutiques', component: BoutiqueBoutiquesListComponent },
       { path: 'boutiques/:id', component: BoutiqueBoutiqueDetailsComponent },
+      { path: 'boxes/:id', component: BoutiqueBoxDetailsComponent },
       { path: 'demande-box', component: BoutiqueRequestBoxComponent },
+      { path: 'rents', component: BoutiqueRentsComponent },
       { path: 'history', component: BoutiqueHistoryComponent },
       { path: '', redirectTo: 'boutiques', pathMatch: 'full' }
     ]

@@ -22,6 +22,14 @@ const boxSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+    description: {
+      type: String,
+      default: ""
+    },
+    image: {
+      type: String,
+      default: ""
+    },
     boutique: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Boutique",

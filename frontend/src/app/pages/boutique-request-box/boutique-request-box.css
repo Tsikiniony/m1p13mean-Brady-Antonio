@@ -7,6 +7,11 @@ select{padding:10px;border:1px solid #ddd;border-radius:10px}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .table{width:100%;border-collapse:collapse}
 .table th,.table td{padding:10px;border-bottom:1px solid #eee}
+.thumb{width:56px;height:42px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb;background:#f3f4f6;display:block}
+.muted{color:#6b7280}
+.details{color:#111827;text-decoration:none;font-weight:800}
+.details:hover{text-decoration:underline}
+.desc{max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .loading{margin-top:16px}
 .error{background:#ffe5e5;color:#b00020;padding:10px;border-radius:10px;margin:12px 0}
 .info{background:#e6fff1;color:#085f2d;padding:10px;border-radius:10px;margin:12px 0}

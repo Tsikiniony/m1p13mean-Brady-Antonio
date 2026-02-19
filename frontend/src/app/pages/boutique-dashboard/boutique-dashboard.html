@@ -89,7 +89,7 @@
             <td>{{ box.number }}</td>
             <td>{{ box.rent }}</td>
             <td>
-              <button class="action-btn" (click)="requestBox(box)" [disabled]="isRequesting(box._id)">
+              <button class="action-btn" (click)="requestBox(box)" [disabled]="isButtonDisabled(box)">
                 {{ isRequesting(box._id) ? 'Demande...' : 'Demander' }}
               </button>
             </td>

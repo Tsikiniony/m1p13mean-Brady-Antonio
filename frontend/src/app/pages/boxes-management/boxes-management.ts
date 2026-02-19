@@ -15,6 +15,8 @@ import { Router } from '@angular/router';
 export class BoxesManagementComponent implements OnInit {
   boxes: Box[] = [];
 
+  selectedImageFile: File | null = null;
+
   pendingRequests: PendingBoxRequest[] = [];
   loadingRequests = false;
   handlingRequestId: string | null = null;
@@ -23,6 +25,7 @@ export class BoxesManagementComponent implements OnInit {
   rentMin: number | null = null;
   rentMax: number | null = null;
   statusFilter: '' | 'prise' | 'non prise' = '';
+  rentFilter: '' | 'active' | 'expired' = '';
 
   showModal = false;
   isEditMode = false;
@@ -31,6 +34,7 @@ export class BoxesManagementComponent implements OnInit {
   loading = false;
   savingBox = false;
   deletingBoxId: string | null = null;
+  extendingRentBoxId: string | null = null;
   error = '';
 
   private platformId = inject(PLATFORM_ID);
@@ -52,7 +56,9 @@ export class BoxesManagementComponent implements OnInit {
 
   getEmptyBox(): Box {
     return {
-      rent: 0
+      rent: 0,
+      description: '',
+      image: ''
     };
   }
 
@@ -162,6 +168,7 @@ export class BoxesManagementComponent implements OnInit {
   openAddModal() {
     this.isEditMode = false;
     this.currentBox = this.getEmptyBox();
+    this.selectedImageFile = null;
     this.error = '';
     this.showModal = true;
   }
@@ -169,6 +176,7 @@ export class BoxesManagementComponent implements OnInit {
   openEditModal(box: Box) {
     this.isEditMode = true;
     this.currentBox = { ...box };
+    this.selectedImageFile = null;
     this.error = '';
     this.showModal = true;
   }
@@ -176,7 +184,14 @@ export class BoxesManagementComponent implements OnInit {
   closeModal() {
     this.showModal = false;
     this.currentBox = this.getEmptyBox();
+    this.selectedImageFile = null;
     this.error = '';
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0] || null;
+    this.selectedImageFile = file;
   }
 
   saveBox() {
@@ -199,10 +214,19 @@ export class BoxesManagementComponent implements OnInit {
     this.savingBox = true;
     this.error = '';
 
+    const desc = typeof this.currentBox.description === 'string' ? this.currentBox.description : '';
+
+    const form = new FormData();
+    form.append('rent', String(rentNumber));
+    form.append('description', desc);
+    if (this.selectedImageFile) {
+      form.append('image', this.selectedImageFile);
+    }
+
     const request$ =
       this.isEditMode && this.currentBox._id
-        ? this.boxService.updateBox(this.currentBox._id, { rent: rentNumber })
-        : this.boxService.createBox({ rent: rentNumber });
+        ? this.boxService.updateBoxForm(this.currentBox._id, form)
+        : this.boxService.createBoxForm(form);
 
     request$
       .pipe(
@@ -249,8 +273,75 @@ export class BoxesManagementComponent implements OnInit {
     return id === this.deletingBoxId;
   }
 
+  isExtendingRent(id: string | undefined): boolean {
+    return !!id && id === this.extendingRentBoxId;
+  }
+
+  getBoutiqueLabel(box: Box): string {
+    if (!box?.boutique) return '-';
+    if (typeof box.boutique === 'object') {
+      const cat = box.boutique.category ? ` - ${box.boutique.category}` : '';
+
+      let ownerEmail = '';
+      if (box.boutique.owner && typeof box.boutique.owner === 'object' && box.boutique.owner.email) {
+        ownerEmail = box.boutique.owner.email;
+      }
+
+      const ownerPart = ownerEmail ? ` (${ownerEmail})` : '';
+      return `${box.boutique.name}${ownerPart}${cat}`;
+    }
+    return String(box.boutique);
+  }
+
+  extendRent(box: Box) {
+    if (!box?._id) return;
+    if (!box?.boutique) {
+      this.error = "Cette box n'est pas louée";
+      return;
+    }
+
+    const ok = confirm('Valider le paiement et prolonger le loyer de +1 mois ?');
+    if (!ok) return;
+
+    this.extendingRentBoxId = box._id;
+    this.error = '';
+
+    this.boxService
+      .extendRent(box._id)
+      .pipe(
+        finalize(() => {
+          this.extendingRentBoxId = null;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.loadBoxes();
+        },
+        error: (err) => {
+          this.error = err.error?.message || err.error?.error || 'Erreur lors de la validation du paiement';
+          console.error(err);
+        }
+      });
+  }
+
   getStatusLabel(box: Box): string {
     return box.boutique ? 'prise' : 'non prise';
+  }
+
+  isExpired(box: Box): boolean {
+    if (!box?.rentExpiresAt) return true;
+    const d = new Date(box.rentExpiresAt);
+    if (Number.isNaN(d.getTime())) return true;
+    return d.getTime() < Date.now();
+  }
+
+  getRentExpiresAtLabel(box: Box): string {
+    const v = box?.rentExpiresAt;
+    if (!v) return '-';
+    const d = new Date(v);
+    if (Number.isNaN(d.getTime())) return String(v);
+    return d.toLocaleDateString();
   }
 
   get filteredBoxes(): Box[] {
@@ -263,6 +354,12 @@ export class BoxesManagementComponent implements OnInit {
       if (nameTerm && !name.includes(nameTerm)) return false;
 
       if (this.statusFilter && status !== this.statusFilter) return false;
+
+      if (this.rentFilter) {
+        const expired = this.isExpired(b);
+        if (this.rentFilter === 'active' && expired) return false;
+        if (this.rentFilter === 'expired' && !expired) return false;
+      }
 
       if (this.rentMin !== null && this.rentMin !== undefined) {
         if (Number(b.rent) < Number(this.rentMin)) return false;

@@ -37,6 +37,15 @@
         <option value="prise">prise</option>
       </select>
     </div>
+
+    <div class="filter-item">
+      <label>Loyer</label>
+      <select [(ngModel)]="rentFilter">
+        <option value="">Tous</option>
+        <option value="active">actif</option>
+        <option value="expired">expiré</option>
+      </select>
+    </div>
   </div>
 
   <div class="table-container" *ngIf="!loading">
@@ -61,11 +70,23 @@
           <td>{{ getRequestBoutiqueLabel(r) }}</td>
           <td>
             <div class="actions">
-              <button class="btn-edit" (click)="approvePendingRequest(r)" [disabled]="isHandlingRequest(r.requestId)">
-                {{ isHandlingRequest(r.requestId) ? '⏳ ...' : '✅ Valider' }}
+              <button
+                class="btn-edit icon-btn"
+                (click)="approvePendingRequest(r)"
+                [disabled]="isHandlingRequest(r.requestId)"
+                [attr.aria-label]="'Valider demande'"
+                title="Valider"
+              >
+                {{ isHandlingRequest(r.requestId) ? '⏳' : '✅' }}
               </button>
-              <button class="btn-delete" (click)="rejectPendingRequest(r)" [disabled]="isHandlingRequest(r.requestId)">
-                {{ isHandlingRequest(r.requestId) ? '⏳ ...' : '❌ Refuser' }}
+              <button
+                class="btn-delete icon-btn"
+                (click)="rejectPendingRequest(r)"
+                [disabled]="isHandlingRequest(r.requestId)"
+                [attr.aria-label]="'Refuser demande'"
+                title="Refuser"
+              >
+                {{ isHandlingRequest(r.requestId) ? '⏳' : '❌' }}
               </button>
             </div>
           </td>
@@ -85,7 +106,9 @@
           <th>Nom</th>
           <th>Numéro</th>
           <th>Loyer</th>
-          <th>Status</th>
+          <th>Boutique</th>
+          <th>Expiration</th>
+          <th>Statut</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -97,29 +120,55 @@
             <div class="box-number">{{ box.number }}</div>
           </td>
           <td>{{ box.rent }}</td>
+          <td>{{ getBoutiqueLabel(box) }}</td>
+          <td>{{ getRentExpiresAtLabel(box) }}</td>
           <td>{{ getStatusLabel(box) }}</td>
           <td>
             <div class="actions">
-              <button class="btn-edit" (click)="openDetails(box)" [disabled]="isDeleting(box._id)">
-                🔎 Détails
-              </button>
-              <button class="btn-edit" (click)="openEditModal(box)" [disabled]="isDeleting(box._id)">
-                ✏️ Modifier
+              <button
+                class="btn-edit icon-btn"
+                (click)="openDetails(box)"
+                [disabled]="isDeleting(box._id)"
+                aria-label="Détails"
+                title="Détails"
+              >
+                🔎
               </button>
               <button
-                class="btn-delete"
+                class="btn-edit icon-btn"
+                (click)="openEditModal(box)"
+                [disabled]="isDeleting(box._id)"
+                aria-label="Modifier"
+                title="Modifier"
+              >
+                ✏️
+              </button>
+              <button
+                class="btn-pay icon-btn"
+                (click)="extendRent(box)"
+                *ngIf="box.boutique"
+                [disabled]="isDeleting(box._id) || isExtendingRent(box._id)"
+                aria-label="Valider paiement (+1 mois)"
+                title="Valider paiement (+1 mois)"
+              >
+                {{ isExtendingRent(box._id) ? '⏳' : '💳' }}
+              </button>
+              <button
+                class="btn-delete icon-btn"
                 (click)="deleteBox(box._id)"
                 [disabled]="isDeleting(box._id)"
                 [class.deleting]="isDeleting(box._id)"
+                aria-label="Supprimer"
+                title="Supprimer"
               >
-                {{ isDeleting(box._id) ? '⏳ Suppression...' : '🗑️ Supprimer' }}
+                {{ isDeleting(box._id) ? '⏳' : '🗑️' }}
               </button>
             </div>
           </td>
         </tr>
         </ng-container>
         <tr *ngIf="filteredBoxes.length === 0">
-          <td colspan="5" style="text-align: center; padding: 30px;">Aucun box trouvé</td>
+          <td colspan="7" style="text-align: center; padding: 30px;">Aucun box trouvé</td>
         </tr>
       </tbody>
     </table>
@@ -141,6 +190,16 @@
       <div class="form-group">
         <label>Loyer</label>
         <input type="number" [(ngModel)]="currentBox.rent" placeholder="Ex: 100000" min="0" required />
+      </div>
+
+      <div class="form-group">
+        <label>Photo</label>
+        <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="currentBox.description" rows="3" placeholder="Description de la box..."></textarea>
       </div>
     </div>
 
