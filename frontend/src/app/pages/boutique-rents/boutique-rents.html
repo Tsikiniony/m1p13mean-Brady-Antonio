@@ -1,0 +1,51 @@
+<div class="page">
+  <div class="header">
+    <h1>Mes loyers</h1>
+    <div class="filters">
+      <button type="button" class="chip" [class.active]="filter === 'all'" (click)="filter = 'all'">Tous</button>
+      <button type="button" class="chip" [class.active]="filter === 'active'" (click)="filter = 'active'">Actifs</button>
+      <button type="button" class="chip" [class.active]="filter === 'expired'" (click)="filter = 'expired'">Expirés</button>
+    </div>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="loading" *ngIf="loading">Chargement...</div>
+
+  <div class="card" *ngIf="!loading">
+    <table class="table" *ngIf="filteredBoxes.length > 0">
+      <thead>
+        <tr>
+          <th>Photo</th>
+          <th>Box</th>
+          <th>Loyer</th>
+          <th>Expiration</th>
+          <th>Statut</th>
+          <th>Détails</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let box of filteredBoxes">
+          <td>
+            <img *ngIf="box.image" class="thumb" [src]="box.image" alt="" loading="lazy" />
+            <span *ngIf="!box.image" class="muted">-</span>
+          </td>
+          <td>{{ getBoxTitle(box) }}</td>
+          <td>{{ box.rent }}</td>
+          <td>{{ getExpiresLabel(box) }}</td>
+          <td>
+            <span class="badge" [class.badge-expired]="isExpired(box)">
+              {{ isExpired(box) ? 'Expiré' : 'Actif' }}
+            </span>
+          </td>
+          <td>
+            <a class="link" *ngIf="box._id" [routerLink]="['/boutique/boxes', box._id]">Voir</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="empty" *ngIf="filteredBoxes.length === 0">
+      Aucun loyer.
+    </div>
+  </div>
+</div>

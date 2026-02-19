@@ -147,7 +147,7 @@ export class BoutiqueDashboardComponent implements OnInit {
     this.error = '';
     this.info = '';
 
-    this.boxService.getPublicBoxes().subscribe({
+    this.boxService.getBoxesForRequest().subscribe({
       next: (boxes) => {
         this.boxes = boxes;
         this.loading = false;
@@ -172,6 +172,12 @@ export class BoutiqueDashboardComponent implements OnInit {
       this.error = 'Sélectionne une boutique avant de demander une box';
       return;
     }
+
+    if (this.hasPendingRequestForSelectedBoutique(box)) {
+      this.error = 'Demande déjà en cours pour cette box';
+      return;
+    }
+
     this.requestingBoxId = box._id;
     this.error = '';
     this.info = '';
@@ -193,5 +199,27 @@ export class BoutiqueDashboardComponent implements OnInit {
 
   isRequesting(boxId: string | undefined): boolean {
     return !!boxId && boxId === this.requestingBoxId;
+  }
+
+  hasPendingRequestForSelectedBoutique(box: Box): boolean {
+    if (!this.selectedBoutiqueId) return false;
+    const requests = Array.isArray(box.requests) ? box.requests : [];
+    return requests.some(
+      (r) => String(r.boutique) === String(this.selectedBoutiqueId) && r.status === 'pending'
+    );
+  }
+
+  isButtonDisabled(box: Box): boolean {
+    const boxStatus = box.status || (box.boutique ? 'prise' : 'non prise');
+    // Si le statut de la box est "non prise", on peut toujours demander
+    if (boxStatus === 'non prise') {
+      return (
+        this.isRequesting(box._id) ||
+        this.hasPendingRequestForSelectedBoutique(box) ||
+        !this.selectedBoutiqueId
+      );
+    }
+    // Pour les autres statuts, on désactive
+    return true;
   }
 }

@@ -11,34 +11,49 @@
       <label>Boutique</label>
       <select [(ngModel)]="selectedBoutiqueId" [disabled]="loadingBoutiques">
         <option [ngValue]="null">Choisir...</option>
-        <option *ngFor="let b of boutiques" [ngValue]="b._id" [disabled]="b.hasBox">
-          {{ b.name }}{{ b.hasBox ? ' (déjà une box)' : '' }}
+        <option *ngFor="let b of boutiques" [ngValue]="b._id">
+          {{ b.name }}{{ b.hasBox ? ' (a déjà eu une box)' : '' }}
         </option>
       </select>
     </div>
 
     <div class="hint" *ngIf="selectedBoutique && selectedBoutique.hasBox">
-      Cette boutique a déjà une box, tu ne peux pas demander une nouvelle allocation.
+      Cette boutique a déjà eu une box, mais peut demander une nouvelle allocation si une box est disponible.
     </div>
   </section>
 
   <section class="card" *ngIf="!loading">
     <h2>Boxes disponibles</h2>
 
-    <table class="table">
+    <table class="table" *ngIf="!loading">
       <thead>
         <tr>
+          <th>Photo</th>
           <th>Nom</th>
           <th>Numéro</th>
           <th>Loyer</th>
+          <th>Description</th>
+          <th>Détails</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let box of availableBoxes">
+          <td>
+            <img *ngIf="box.image" class="thumb" [src]="box.image" alt="" loading="lazy" />
+            <span *ngIf="!box.image" class="muted">-</span>
+          </td>
           <td>{{ box.name }}</td>
           <td>{{ box.number }}</td>
           <td>{{ box.rent }}</td>
+          <td>
+            <div class="desc" *ngIf="box.description">{{ box.description }}</div>
+            <span *ngIf="!box.description" class="muted">-</span>
+          </td>
+          <td>
+            <a class="details" *ngIf="box._id" [routerLink]="['/boutique/boxes', box._id]">Voir</a>
+            <span *ngIf="!box._id" class="muted">-</span>
+          </td>
           <td>
             <button class="btn" (click)="requestBox(box)" [disabled]="isButtonDisabled(box)">
               {{ getButtonLabel(box) }}
@@ -46,7 +61,7 @@
           </td>
         </tr>
         <tr *ngIf="availableBoxes.length === 0">
-          <td colspan="4" style="text-align:center;padding:12px;">Aucune box disponible</td>
+          <td colspan="7" style="text-align:center;padding:12px;">Aucune box disponible</td>
         </tr>
       </tbody>
     </table>

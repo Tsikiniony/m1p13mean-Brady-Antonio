@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const boxController = require("../controllers/boxController");
+const { upload } = require("../middleware/uploadMiddleware");
 const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
 
@@ -24,8 +25,21 @@ router.post(
   boxController.requestBox
 );
 
+router.get(
+  "/my-rents",
+  protect,
+  authorizeRoles("boutique"),
+  boxController.getMyRents
+);
+
 // Admin: CRUD
 router.get("/", protect, authorizeRoles("admin"), boxController.getAllBoxes);
+router.put(
+  "/:id/rent/extend",
+  protect,
+  authorizeRoles("admin"),
+  boxController.extendRent
+);
 router.get(
   "/requests/pending",
   protect,
@@ -48,8 +62,20 @@ router.get(
   boxController.getMyRequestsHistory
 );
 router.get("/:id", protect, authorizeRoles("admin"), boxController.getBoxById);
-router.post("/", protect, authorizeRoles("admin"), boxController.createBox);
-router.put("/:id", protect, authorizeRoles("admin"), boxController.updateBox);
+router.post(
+  "/",
+  protect,
+  authorizeRoles("admin"),
+  upload.single("image"),
+  boxController.createBox
+);
+router.put(
+  "/:id",
+  protect,
+  authorizeRoles("admin"),
+  upload.single("image"),
+  boxController.updateBox
+);
 router.delete("/:id", protect, authorizeRoles("admin"), boxController.deleteBox);
 
 router.put(

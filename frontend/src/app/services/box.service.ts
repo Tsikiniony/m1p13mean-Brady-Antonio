@@ -8,6 +8,8 @@ export interface Box {
   name?: string;
   number?: number;
   rent: number;
+  description?: string;
+  image?: string;
   status?: 'prise' | 'non prise';
   rentExpiresAt?: string | null;
   requests?: Array<{
@@ -61,6 +63,8 @@ export interface PendingBoxRequest {
 
 export type CreateBoxPayload = {
   rent: number;
+  description?: string;
+  image?: string;
 };
 
 @Injectable({
@@ -89,6 +93,19 @@ export class BoxService {
     return headers;
   }
 
+  private getAuthOnlyHeaders(): HttpHeaders {
+    let token: string | null = null;
+    if (isPlatformBrowser(this.platformId)) {
+      token = localStorage.getItem('token');
+    }
+
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }
+
   getAllBoxes(): Observable<Box[]> {
     return this.http.get<Box[]>(this.API_URL, { headers: this.getHeaders() });
   }
@@ -101,6 +118,10 @@ export class BoxService {
     return this.http.get<Box[]>(`${this.API_URL}/for-request`, { headers: this.getHeaders() });
   }
 
+  getMyRents(): Observable<Box[]> {
+    return this.http.get<Box[]>(`${this.API_URL}/my-rents`, { headers: this.getHeaders() });
+  }
+
   getPublicBoxById(id: string): Observable<Box> {
     return this.http.get<Box>(`${this.API_URL}/public/${id}`);
   }
@@ -109,12 +130,24 @@ export class BoxService {
     return this.http.get<Box>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
 
+  extendRent(boxId: string): Observable<Box> {
+    return this.http.put<Box>(`${this.API_URL}/${boxId}/rent/extend`, {}, { headers: this.getHeaders() });
+  }
+
   createBox(box: CreateBoxPayload): Observable<Box> {
     return this.http.post<Box>(this.API_URL, box, { headers: this.getHeaders() });
   }
 
+  createBoxForm(form: FormData): Observable<Box> {
+    return this.http.post<Box>(this.API_URL, form, { headers: this.getAuthOnlyHeaders() });
+  }
+
   updateBox(id: string, box: Partial<Box>): Observable<Box> {
     return this.http.put<Box>(`${this.API_URL}/${id}`, box, { headers: this.getHeaders() });
+  }
+
+  updateBoxForm(id: string, form: FormData): Observable<Box> {
+    return this.http.put<Box>(`${this.API_URL}/${id}`, form, { headers: this.getAuthOnlyHeaders() });
   }
 
   deleteBox(id: string): Observable<any> {

@@ -25,7 +25,7 @@ export class Login implements OnInit {
   presets: Record<'client' | 'boutique' | 'admin', { email: string; password: string; label: string }> = {
     client: { email: 'client@gmail.com', password: '123456', label: 'Client' },
     boutique: { email: 'boutique@gmail.com', password: '123456', label: 'Boutique' },
-    admin: { email: 'admin@admin.com', password: '123456', label: 'Admin' }
+    admin: { email: 'admin@gmail.com', password: '123456', label: 'Admin' }
   };
 
   ngOnInit(): void {

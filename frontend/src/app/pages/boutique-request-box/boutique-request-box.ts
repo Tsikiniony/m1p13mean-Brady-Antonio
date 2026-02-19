@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Box, BoxService } from '../../services/box.service';
 import { BoutiqueWithBoxFlag, BoutiquesService } from '../../services/boutiques.service';
 
 @Component({
   selector: 'app-boutique-request-box',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './boutique-request-box.html',
   styleUrl: './boutique-request-box.css'
 })
@@ -98,12 +99,6 @@ export class BoutiqueRequestBoxComponent implements OnInit {
       return;
     }
 
-    const boutique = this.selectedBoutique;
-    if (boutique?.hasBox) {
-      this.error = 'Cette boutique a déjà une box';
-      return;
-    }
-
     this.requestingBoxId = box._id;
     this.error = '';
     this.info = '';
@@ -143,6 +138,16 @@ export class BoutiqueRequestBoxComponent implements OnInit {
   }
 
   isButtonDisabled(box: Box): boolean {
+    const boxStatus = box.status || (box.boutique ? 'prise' : 'non prise');
+    // Si le statut de la box est "non prise", on peut toujours demander
+    if (boxStatus === 'non prise') {
+      return (
+        this.isRequesting(box._id) ||
+        this.hasPendingRequestForSelectedBoutique(box) ||
+        !this.selectedBoutiqueId
+      );
+    }
+    // Pour les autres statuts, garder la logique existante
     return (
       this.isRequesting(box._id) ||
       this.hasPendingRequestForSelectedBoutique(box) ||

@@ -3,10 +3,20 @@ const Boutique = require("../models/Boutique");
 
 const withStatus = (box) => {
   const obj = box.toObject ? box.toObject() : box;
-  return {
-    ...obj,
-    status: obj.boutique ? "prise" : "non prise"
-  };
+  const now = new Date();
+  
+  // Si la box n'a pas de boutique, elle est "non prise"
+  if (!obj.boutique) {
+    return { ...obj, status: "non prise" };
+  }
+  
+  // Si la box a une date d'expiration expirée, elle devient "non prise"
+  if (obj.rentExpiresAt && new Date(obj.rentExpiresAt) <= now) {
+    return { ...obj, status: "non prise" };
+  }
+  
+  // Sinon elle est "prise"
+  return { ...obj, status: "prise" };
 };
 
 exports.getRequestsHistory = async (req, res) => {
@@ -190,6 +200,10 @@ exports.approveRequest = async (req, res) => {
     }
 
     box.boutique = request.boutique;
+    const now = new Date();
+    const expiresAt = new Date(now);
+    expiresAt.setMonth(expiresAt.getMonth() + 1);
+    box.rentExpiresAt = expiresAt;
     request.status = "approved";
     request.decidedAt = new Date();
 
@@ -215,6 +229,21 @@ exports.approveRequest = async (req, res) => {
       });
 
     res.json(withStatus(populated));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getMyRents = async (req, res) => {
+  try {
+    const myBoutiques = await Boutique.find({ owner: req.user._id }).select("_id name category");
+    const myBoutiqueIds = (myBoutiques || []).map((b) => b._id);
+
+    const boxes = await Box.find({ boutique: { $in: myBoutiqueIds } })
+      .populate({ path: "boutique", select: "name category owner" })
+      .sort({ createdAt: -1 });
+
+    res.json((boxes || []).map(withStatus));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -314,7 +343,40 @@ exports.getBoxesForBoutiqueRequest = async (req, res) => {
 
 exports.getAllBoxes = async (req, res) => {
   try {
-    const boxes = await Box.find()
+    const boxes = await Box.find().sort({ createdAt: -1 });
+    res.json(boxes.map(withStatus));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.extendRent = async (req, res) => {
+  try {
+    const box = await Box.findById(req.params.id);
+    if (!box) {
+      return res.status(404).json({ message: "Box non trouvé" });
+    }
+
+    if (!box.boutique) {
+      return res.status(400).json({ message: "Cette box n'est pas louée" });
+    }
+
+    const now = new Date();
+    const currentExpiry = box.rentExpiresAt ? new Date(box.rentExpiresAt) : null;
+    const baseDate =
+      currentExpiry &&
+      !Number.isNaN(currentExpiry.getTime()) &&
+      currentExpiry.getTime() > now.getTime()
+        ? currentExpiry
+        : now;
+
+    const newExpiry = new Date(baseDate);
+    newExpiry.setMonth(newExpiry.getMonth() + 1);
+    box.rentExpiresAt = newExpiry;
+
+    await box.save();
+
+    const populated = await Box.findById(box._id)
       .populate({
         path: "boutique",
         select: "name category owner",
@@ -324,9 +386,9 @@ exports.getAllBoxes = async (req, res) => {
         path: "requests.boutique",
         select: "name category owner",
         populate: { path: "owner", select: "name email" }
-      })
-      .sort({ createdAt: -1 });
-    res.json(boxes.map(withStatus));
+      });
+
+    res.json(withStatus(populated));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -359,7 +421,7 @@ exports.getBoxById = async (req, res) => {
 
 exports.createBox = async (req, res) => {
   try {
-    const { rent } = req.body;
+    const { rent, description, image } = req.body;
 
     if (typeof rent === "undefined") {
       return res.status(400).json({ message: "Le loyer est requis" });
@@ -370,8 +432,16 @@ exports.createBox = async (req, res) => {
       return res.status(400).json({ message: "Le loyer est invalide" });
     }
 
+    let imageUrl = typeof image === "string" ? image : "";
+    if (req.file) {
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+    }
+
     const createPayload = {
-      rent: rentNumber
+      rent: rentNumber,
+      description: typeof description === "string" ? description : "",
+      image: imageUrl
     };
 
     // En cas de collision (E11000) sur number auto-incrémenté, on retente
@@ -396,7 +466,7 @@ exports.createBox = async (req, res) => {
 
 exports.updateBox = async (req, res) => {
   try {
-    const { rent } = req.body;
+    const { rent, description, image } = req.body;
 
     const updateData = {};
     if (typeof rent !== "undefined") {
@@ -405,6 +475,19 @@ exports.updateBox = async (req, res) => {
         return res.status(400).json({ message: "Le loyer est invalide" });
       }
       updateData.rent = rentNumber;
+    }
+
+    if (typeof description !== "undefined") {
+      updateData.description = typeof description === "string" ? description : "";
+    }
+
+    if (typeof image !== "undefined") {
+      updateData.image = typeof image === "string" ? image : "";
+    }
+
+    if (req.file) {
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      updateData.image = `${baseUrl}/uploads/${req.file.filename}`;
     }
     const box = await Box.findByIdAndUpdate(req.params.id, updateData, {
       returnDocument: "after",

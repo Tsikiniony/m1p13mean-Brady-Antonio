@@ -1,0 +1,47 @@
+<div class="page">
+  <div class="topbar">
+    <a class="back" routerLink="/boutique/demande-box">← Retour</a>
+    <h1>Détails box</h1>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="loading" *ngIf="loading">Chargement...</div>
+
+  <div class="card" *ngIf="!loading && box">
+    <div class="media" *ngIf="box.image">
+      <img [src]="box.image" alt="" />
+    </div>
+
+    <div class="grid">
+      <div class="row">
+        <div class="label">Nom</div>
+        <div class="value">{{ box.name }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Numéro</div>
+        <div class="value">{{ box.number }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Loyer</div>
+        <div class="value">{{ box.rent }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Statut</div>
+        <div class="value">{{ getStatusLabel() }}</div>
+      </div>
+
+      <div class="row">
+        <div class="label">Expiration loyer</div>
+        <div class="value">{{ getRentExpiresAtLabel() }}</div>
+      </div>
+
+      <div class="row" *ngIf="box.description">
+        <div class="label">Description</div>
+        <div class="value">{{ box.description }}</div>
+      </div>
+    </div>
+  </div>
+</div>
