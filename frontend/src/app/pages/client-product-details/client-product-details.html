@@ -1,0 +1,29 @@
+<div class="page">
+  <a class="back" routerLink="/client/products">← Retour</a>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+  <div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+  <div class="wrap" *ngIf="!loading && !error && article">
+    <div class="hero">
+      <img [src]="getImage()" alt="" />
+    </div>
+
+    <div class="card">
+      <div class="top">
+        <div>
+          <h1 class="title">{{ article.name }}</h1>
+          <div class="boutique" *ngIf="getBoutiqueName()">
+            Boutique: <strong>{{ getBoutiqueName() }}</strong>
+            <span class="cat" *ngIf="getBoutiqueCategory()">• {{ getBoutiqueCategory() }}</span>
+          </div>
+        </div>
+        <div class="price">{{ article.price | number:'1.0-2' }} Ar</div>
+      </div>
+
+      <div class="desc" *ngIf="article.description">
+        {{ article.description }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="page">
+  <div class="head">
+    <div>
+      <h1 class="title">Produits</h1>
+      <div class="subtitle">Tous les produits de toutes les boutiques</div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+  <div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+  <div class="grid" *ngIf="!loading && !error">
+    <a class="card" *ngFor="let a of articles; trackBy: trackById" [routerLink]="['/client/products', a._id]">
+      <div class="image">
+        <img [src]="getImage(a)" alt="" loading="lazy" />
+      </div>
+      <div class="body">
+        <div class="row">
+          <div class="name">{{ a.name }}</div>
+          <div class="price">{{ a.price | number:'1.0-2' }} Ar</div>
+        </div>
+        <div class="meta">
+          <span class="boutique" *ngIf="getBoutiqueName(a)">Boutique: {{ getBoutiqueName(a) }}</span>
+          <span class="cat" *ngIf="getBoutiqueCategory(a)">• {{ getBoutiqueCategory(a) }}</span>
+        </div>
+        <div class="desc" *ngIf="a.description">{{ a.description }}</div>
+      </div>
+    </a>
+
+    <div class="empty" *ngIf="articles.length === 0">Aucun produit disponible.</div>
+  </div>
+</div>

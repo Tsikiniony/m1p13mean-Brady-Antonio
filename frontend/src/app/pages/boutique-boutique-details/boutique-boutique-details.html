@@ -26,4 +26,175 @@
       <div><strong>Status</strong><div>{{ getBoxStatusLabel() }}</div></div>
     </div>
   </section>
+
+  <section class="card" *ngIf="!loading">
+    <div class="section-header">
+      <div>
+        <h2 style="margin:0;">Produits</h2>
+        <div class="muted">{{ articles.length }} produit(s)</div>
+      </div>
+      <button class="btn" type="button" (click)="openCreateModal()">Ajouter un produit</button>
+    </div>
+
+    <div class="empty" *ngIf="articles.length === 0">Aucun produit pour cette boutique.</div>
+
+    <div class="table" *ngIf="articles.length > 0">
+      <div class="table-head">
+        <div>Nom</div>
+        <div style="text-align:right;">Prix</div>
+        <div style="text-align:right;">Actions</div>
+      </div>
+      <div class="row-item" *ngFor="let a of articles">
+        <div class="cell-main">
+          <div class="thumb" *ngIf="a.image">
+            <img [src]="a.image" alt="" />
+          </div>
+          <div class="thumb placeholder" *ngIf="!a.image"></div>
+
+          <div class="info">
+            <div class="title">{{ a.name }}</div>
+            <div class="sub" *ngIf="a.description">{{ a.description }}</div>
+          </div>
+        </div>
+
+        <div class="cell-price">{{ a.price }} Ar</div>
+
+        <div class="cell-actions">
+          <button class="icon-btn" type="button" (click)="openDetails(a)" title="Détails" aria-label="Détails">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5c7 0 10 7 10 7s-3 7-10 7S2 12 2 12s3-7 10-7Zm0 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
+            </svg>
+          </button>
+          <button class="icon-btn" type="button" (click)="startEdit(a)" title="Modifier" aria-label="Modifier">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Zm2.92 2.33H5v-.92l9.06-9.06.92.92L5.92 19.58ZM20.71 7.04a1 1 0 0 0 0-1.41L18.37 3.29a1 1 0 0 0-1.41 0l-1.2 1.2 3.75 3.75 1.2-1.2Z" />
+            </svg>
+          </button>
+          <button class="icon-btn danger" type="button" (click)="deleteArticle(a)" title="Supprimer" aria-label="Supprimer">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Zm-4 2h14v2H5V6Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" *ngIf="selectedArticle">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Détails produit</div>
+          <div class="muted">{{ selectedArticle.name }}</div>
+        </div>
+        <button class="btn-lite" (click)="closeDetails()">Fermer</button>
+      </div>
+
+      <div class="panel-body">
+        <div class="panel-media">
+          <img *ngIf="selectedArticle.image" [src]="selectedArticle.image" alt="" />
+          <div class="media-placeholder" *ngIf="!selectedArticle.image"></div>
+        </div>
+        <div class="panel-info">
+          <div><strong>Nom</strong><div>{{ selectedArticle.name }}</div></div>
+          <div><strong>Prix</strong><div>{{ selectedArticle.price }} Ar</div></div>
+          <div><strong>Description</strong><div>{{ selectedArticle.description || '-' }}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="editingArticleId" (click)="cancelEdit()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <div>
+            <div class="modal-title">Modifier produit</div>
+            <div class="muted">{{ editName || '—' }}</div>
+          </div>
+          <button class="icon-btn" type="button" (click)="cancelEdit()" [disabled]="updating" title="Fermer" aria-label="Fermer">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.71 2.88 18.29 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3 1.42 1.42Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form" style="margin-top:0;">
+            <label>
+              Nom
+              <input [(ngModel)]="editName" />
+            </label>
+            <label>
+              Prix
+              <input type="number" [(ngModel)]="editPrice" />
+            </label>
+            <label style="grid-column:1/-1;">
+              Description
+              <textarea [(ngModel)]="editDescription" rows="3"></textarea>
+            </label>
+            <label style="grid-column:1/-1;">
+              Image
+              <input type="file" accept="image/*" (change)="onPickEditImage($event)" />
+            </label>
+
+            <div class="preview" *ngIf="editImagePreview">
+              <img [src]="editImagePreview" alt="" />
+            </div>
+
+            <div class="modal-actions">
+              <button class="btn" (click)="saveCurrentEdit()" [disabled]="updating">
+                {{ updating ? 'Enregistrement...' : 'Enregistrer' }}
+              </button>
+              <button class="btn-lite" (click)="cancelEdit()" [disabled]="updating">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="creatingModalOpen" (click)="closeCreateModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <div>
+            <div class="modal-title">Ajouter un produit</div>
+            <div class="muted">Crée un produit pour cette boutique</div>
+          </div>
+          <button class="icon-btn" type="button" (click)="closeCreateModal()" [disabled]="creating" title="Fermer" aria-label="Fermer">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.71 2.88 18.29 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3 1.42 1.42Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form" style="margin-top:0;">
+            <label>
+              Nom
+              <input [(ngModel)]="newName" placeholder="Nom du produit" />
+            </label>
+            <label>
+              Prix
+              <input type="number" [(ngModel)]="newPrice" placeholder="0" />
+            </label>
+            <label style="grid-column:1/-1;">
+              Description
+              <textarea [(ngModel)]="newDescription" rows="3" placeholder="Description"></textarea>
+            </label>
+            <label style="grid-column:1/-1;">
+              Image
+              <input type="file" accept="image/*" (change)="onPickImage($event)" />
+            </label>
+
+            <div class="preview" *ngIf="newImagePreview">
+              <img [src]="newImagePreview" alt="" />
+            </div>
+
+            <div class="modal-actions">
+              <button class="btn" (click)="createArticle()" [disabled]="creating">
+                {{ creating ? 'Ajout...' : 'Ajouter le produit' }}
+              </button>
+              <button class="btn-lite" (click)="closeCreateModal()" [disabled]="creating">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
