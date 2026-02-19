@@ -16,6 +16,7 @@ export class Register {
   email = '';
   password = '';
   confirmPassword = '';
+  isBoutique = false;
 
   loading = false;
   error = '';
@@ -52,7 +53,7 @@ export class Register {
         name: this.name,
         email: this.email,
         password: this.password,
-        role: 'client'
+        role: this.isBoutique ? 'boutique' : 'client'
       })
       .subscribe({
         next: () => {

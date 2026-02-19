@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PublicArticlesService, PublicArticle } from '../../services/public-articles.service';
 
@@ -15,9 +15,20 @@ export class ClientProductDetailsComponent implements OnInit {
   error = '';
   article: PublicArticle | null = null;
 
-  constructor(private route: ActivatedRoute, private publicArticles: PublicArticlesService) {}
+  private platformId = inject(PLATFORM_ID);
+
+  constructor(
+    private route: ActivatedRoute,
+    private publicArticles: PublicArticlesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.loading = false;
+      return;
+    }
+
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.error = 'ID produit manquant';
@@ -29,11 +40,13 @@ export class ClientProductDetailsComponent implements OnInit {
       next: (a) => {
         this.article = a;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.error = err?.error?.message || err?.error?.error || 'Erreur lors du chargement du produit';
         this.loading = false;
         console.error(err);
+        this.cdr.detectChanges();
       }
     });
   }

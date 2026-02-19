@@ -27,6 +27,25 @@ export class AuthService {
     }
   }
 
+  saveUser(user: any) {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('user', JSON.stringify(user || null));
+    }
+  }
+
+  getUser(): any {
+    if (isPlatformBrowser(this.platformId)) {
+      const raw = localStorage.getItem('user');
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+
   getToken() {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('token');
@@ -37,6 +56,7 @@ export class AuthService {
   logout() {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
     this.router.navigate(['/login']);
   }
