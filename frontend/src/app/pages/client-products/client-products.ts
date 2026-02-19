@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PublicArticlesService, PublicArticle, PublicBoutique } from '../../services/public-articles.service';
 
@@ -15,9 +15,18 @@ export class ClientProductsComponent implements OnInit {
   error = '';
   articles: PublicArticle[] = [];
 
-  constructor(private publicArticles: PublicArticlesService) {}
+  private platformId = inject(PLATFORM_ID);
+
+  constructor(
+    private publicArticles: PublicArticlesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.loading = false;
+      return;
+    }
     this.fetch();
   }
 
@@ -29,11 +38,13 @@ export class ClientProductsComponent implements OnInit {
       next: (items) => {
         this.articles = items || [];
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.error = err?.error?.message || err?.error?.error || 'Erreur lors du chargement des produits';
         this.loading = false;
         console.error(err);
+        this.cdr.detectChanges();
       }
     });
   }

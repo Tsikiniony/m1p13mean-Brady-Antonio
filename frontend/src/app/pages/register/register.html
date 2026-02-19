@@ -1,5 +1,5 @@
 <div class="register-container">
-  <h2>📝 Inscription Client</h2>
+  <h2>📝 Inscription</h2>
 
   <div class="error-message" *ngIf="error">
     {{ error }}
@@ -19,6 +19,14 @@
 
   <div class="form-group">
     <input type="password" [(ngModel)]="confirmPassword" placeholder="🔒 Confirmer mot de passe" />
+  </div>
+
+  <div class="form-group">
+    <label class="checkbox-wrapper">
+      <input type="checkbox" [(ngModel)]="isBoutique" />
+      <span class="checkbox-custom"></span>
+      <span class="checkbox-label">S'inscrire en tant que boutique</span>
+    </label>
   </div>
 
   <button (click)="onRegister()" [disabled]="loading">

@@ -22,6 +22,51 @@
   overflow: hidden;
 }
 
+.login-types{
+  display:flex;
+  gap:10px;
+  margin:18px 0 22px;
+  position:relative;
+  z-index:1;
+}
+
+.type-btn{
+  flex:1;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  color:#111827;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:none;
+  text-transform:none;
+}
+
+.type-btn:hover{background:#f3f4f6}
+
+.type-btn.active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+
+.form{
+  position:relative;
+  z-index:1;
+}
+
+.form.animating{
+  animation: slideSwap .45s ease both;
+}
+
+.register-link{margin-top: 12px; text-align: center; position:relative; z-index:1;}
+
+@keyframes slideSwap{
+  from{opacity:0; transform: translateX(18px)}
+  to{opacity:1; transform: translateX(0)}
+}
+
 .login-container::before {
   content: '';
   position: absolute;

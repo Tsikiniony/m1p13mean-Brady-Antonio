@@ -5,10 +5,108 @@
   min-height: 100vh;
 }
 
-/* Reset pour éviter les espaces vides */
-router-outlet {
-  display: none;
+.public-navbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 18px;
+  background:#ffffff;
+  border-bottom:1px solid #e5e7eb;
 }
+
+.public-brand{
+  font-weight:800;
+  color:#111827;
+  text-decoration:none;
+  letter-spacing:.2px;
+}
+
+.public-links{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.public-link{
+  text-decoration:none;
+  color:#374151;
+  font-weight:700;
+  padding:8px 10px;
+  border-radius:10px;
+}
+
+.public-link:hover{background:#f3f4f6}
+
+.public-link.active{background:#111827;color:#fff}
+
+.public-actions{display:flex;gap:10px;align-items:center}
+
+.public-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #111827;
+  background:#111827;
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
+}
+
+.public-btn.secondary{background:#fff;color:#111827}
+
+.public-btn:hover{opacity:.92}
+
+.user-menu{position:relative}
+
+.user-trigger{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  color:#111827;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:none;
+  text-transform:none;
+}
+
+.user-trigger:hover{background:#f3f4f6}
+
+.user-dropdown{
+  position:absolute;
+  right:0;
+  top:calc(100% + 10px);
+  min-width:180px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(17,24,39,.12);
+  padding:8px;
+}
+
+.user-item{
+  width:100%;
+  border:none;
+  background:transparent;
+  padding:10px 12px;
+  text-align:left;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:800;
+  color:#111827;
+  box-shadow:none;
+  text-transform:none;
+}
+
+.user-item:hover{background:#f3f4f6}
+
+.public-container{max-width:1200px;margin:0 auto;padding:18px}
 
 /* Effet de glassmorphism */
 .glass-effect {

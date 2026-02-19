@@ -1,1 +1,30 @@
-<router-outlet />
+<nav class="public-navbar" *ngIf="showPublicNavbar()">
+  <a class="public-brand" routerLink="/">Centre Commercial</a>
+
+  <div class="public-links">
+    <a class="public-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Accueil</a>
+    <a class="public-link" routerLink="/client/products" routerLinkActive="active">Produits</a>
+  </div>
+
+  <div class="public-actions">
+    <ng-container *ngIf="!isClientLoggedIn(); else loggedClient">
+      <a class="public-btn secondary" routerLink="/register">S'inscrire</a>
+      <a class="public-btn" routerLink="/login">Connexion</a>
+    </ng-container>
+
+    <ng-template #loggedClient>
+      <div class="user-menu">
+        <button type="button" class="user-trigger" (click)="toggleUserMenu()">
+          {{ getClientName() }}
+        </button>
+        <div class="user-dropdown" *ngIf="userMenuOpen()">
+          <button type="button" class="user-item" (click)="logout()">Déconnexion</button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</nav>
+
+<div class="public-container">
+  <router-outlet />
+</div>
