@@ -31,6 +31,40 @@ export class BoutiqueDashboardComponent implements OnInit {
   error = '';
   info = '';
 
+  // KPI Abonnements
+  get totalSubscriptions(): number {
+    return (this.boxes || []).filter(b => !!b.boutique).length;
+  }
+
+  get totalPaidThisMonth(): number {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return (this.boxes || [])
+      .filter(b => !!b.boutique && b.rentExpiresAt)
+      .filter(b => {
+        const exp = new Date(b.rentExpiresAt!);
+        // On considère comme payé ce mois si l'expiration est dans le mois prochain
+        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+        return exp >= nextMonth && exp <= endOfNextMonth;
+      })
+      .reduce((sum, b) => sum + (Number(b.rent) || 0), 0);
+  }
+
+  get totalUnpaidThisMonth(): number {
+    const now = new Date();
+    // On considère comme non payé ce mois si l'expiration est ce mois-ci ou antérieure
+    const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return (this.boxes || [])
+      .filter(b => !!b.boutique && b.rentExpiresAt)
+      .filter(b => {
+        const exp = new Date(b.rentExpiresAt!);
+        return exp <= endOfCurrentMonth;
+      })
+      .reduce((sum, b) => sum + (Number(b.rent) || 0), 0);
+  }
+
   private platformId = inject(PLATFORM_ID);
 
   constructor(
@@ -221,5 +255,19 @@ export class BoutiqueDashboardComponent implements OnInit {
     }
     // Pour les autres statuts, on désactive
     return true;
+  }
+
+  isBoxCancelled(box: Box): boolean {
+    if (!box?.rentCancelAt) return false;
+    const d = new Date(box.rentCancelAt);
+    if (Number.isNaN(d.getTime())) return false;
+    return d.getTime() > Date.now();
+  }
+
+  getCancelAvailableDate(box: Box): string {
+    if (!box?.rentCancelAt) return '-';
+    const d = new Date(box.rentCancelAt);
+    if (Number.isNaN(d.getTime())) return String(box.rentCancelAt);
+    return d.toLocaleDateString();
   }
 }

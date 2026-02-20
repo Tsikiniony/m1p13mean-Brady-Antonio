@@ -25,6 +25,13 @@ router.post(
   boxController.requestBox
 );
 
+router.post(
+  "/:id/cancel/request",
+  protect,
+  authorizeRoles("boutique"),
+  boxController.requestCancel
+);
+
 router.get(
   "/my-rents",
   protect,
@@ -45,6 +52,13 @@ router.get(
   protect,
   authorizeRoles("admin"),
   boxController.getPendingRequests
+);
+
+router.get(
+  "/cancel-requests/pending",
+  protect,
+  authorizeRoles("admin"),
+  boxController.getPendingCancelRequests
 );
 // Admin: historique complet
 router.get(
@@ -89,6 +103,19 @@ router.put(
   protect,
   authorizeRoles("admin"),
   boxController.rejectRequest
+);
+
+router.put(
+  "/:id/cancel-requests/:cancelRequestId/approve",
+  protect,
+  authorizeRoles("admin"),
+  boxController.approveCancelRequest
+);
+router.put(
+  "/:id/cancel-requests/:cancelRequestId/reject",
+  protect,
+  authorizeRoles("admin"),
+  boxController.rejectCancelRequest
 );
 
 module.exports = router;

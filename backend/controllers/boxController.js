@@ -1,26 +1,52 @@
 const Box = require("../models/Box");
 const Boutique = require("../models/Boutique");
 
+const autoReleaseExpiredAndCancelledAllocations = async () => {
+  const now = new Date();
+  await Box.updateMany(
+    {
+      boutique: { $ne: null },
+      $or: [
+        { rentExpiresAt: { $ne: null, $lte: now } },
+        { rentCancelAt: { $ne: null, $lte: now } }
+      ]
+    },
+    {
+      $set: {
+        boutique: null,
+        rentExpiresAt: null,
+        rentCancelAt: null
+      }
+    }
+  );
+};
+
 const withStatus = (box) => {
   const obj = box.toObject ? box.toObject() : box;
   const now = new Date();
-  
+
   // Si la box n'a pas de boutique, elle est "non prise"
   if (!obj.boutique) {
     return { ...obj, status: "non prise" };
   }
-  
+
   // Si la box a une date d'expiration expirée, elle devient "non prise"
   if (obj.rentExpiresAt && new Date(obj.rentExpiresAt) <= now) {
     return { ...obj, status: "non prise" };
   }
-  
+
+  // Si une résiliation est planifiée et pas encore atteinte
+  if (obj.rentCancelAt && new Date(obj.rentCancelAt) > now) {
+    return { ...obj, status: "resilié" };
+  }
+
   // Sinon elle est "prise"
   return { ...obj, status: "prise" };
 };
 
 exports.getRequestsHistory = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const boxes = await Box.find({ "requests.status": { $in: ["approved", "rejected"] } })
       .populate({
         path: "requests.boutique",
@@ -55,6 +81,7 @@ exports.getRequestsHistory = async (req, res) => {
 
 exports.getMyRequestsHistory = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const myBoutiques = await Boutique.find({ owner: req.user._id }).select("_id");
     const myBoutiqueIds = (myBoutiques || []).map((b) => b._id);
 
@@ -95,6 +122,7 @@ exports.getMyRequestsHistory = async (req, res) => {
 
 exports.requestBox = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const boxId = req.params.id;
     const { boutiqueId } = req.body;
 
@@ -143,6 +171,7 @@ exports.requestBox = async (req, res) => {
 
 exports.getPendingRequests = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const boxes = await Box.find({ "requests.status": "pending" })
       .populate({
         path: "requests.boutique",
@@ -175,6 +204,7 @@ exports.getPendingRequests = async (req, res) => {
 
 exports.approveRequest = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const box = await Box.findById(req.params.id);
     if (!box) {
       return res.status(404).json({ message: "Box non trouvé" });
@@ -236,6 +266,7 @@ exports.approveRequest = async (req, res) => {
 
 exports.getMyRents = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const myBoutiques = await Boutique.find({ owner: req.user._id }).select("_id name category");
     const myBoutiqueIds = (myBoutiques || []).map((b) => b._id);
 
@@ -251,6 +282,7 @@ exports.getMyRents = async (req, res) => {
 
 exports.rejectRequest = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const box = await Box.findById(req.params.id);
     if (!box) {
       return res.status(404).json({ message: "Box non trouvé" });
@@ -289,6 +321,7 @@ exports.rejectRequest = async (req, res) => {
 
 exports.getPublicBoxes = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const boxes = await Box.find().sort({ createdAt: -1 });
     res.json(boxes.map(withStatus));
   } catch (error) {
@@ -298,6 +331,7 @@ exports.getPublicBoxes = async (req, res) => {
 
 exports.getPublicBoxById = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const box = await Box.findById(req.params.id).populate({
       path: "boutique",
       select: "name category owner",
@@ -314,6 +348,7 @@ exports.getPublicBoxById = async (req, res) => {
 
 exports.getBoxesForBoutiqueRequest = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const myBoutiques = await Boutique.find({ owner: req.user._id }).select("_id");
     const myBoutiqueIds = (myBoutiques || []).map((b) => b._id);
 
@@ -343,7 +378,15 @@ exports.getBoxesForBoutiqueRequest = async (req, res) => {
 
 exports.getAllBoxes = async (req, res) => {
   try {
-    const boxes = await Box.find().sort({ createdAt: -1 });
+    await autoReleaseExpiredAndCancelledAllocations();
+    const boxes = await Box.find()
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      });
+
     res.json(boxes.map(withStatus));
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -352,6 +395,7 @@ exports.getAllBoxes = async (req, res) => {
 
 exports.extendRent = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     const box = await Box.findById(req.params.id);
     if (!box) {
       return res.status(404).json({ message: "Box non trouvé" });
@@ -396,6 +440,7 @@ exports.extendRent = async (req, res) => {
 
 exports.getBoxById = async (req, res) => {
   try {
+    await autoReleaseExpiredAndCancelledAllocations();
     console.log("[GET /api/boxes/:id]", req.params.id, "user=", req.user?._id);
     const box = await Box.findById(req.params.id)
       .populate({
@@ -407,6 +452,11 @@ exports.getBoxById = async (req, res) => {
         path: "requests.boutique",
         select: "name category owner",
         populate: { path: "owner", select: "name email" }
+      })
+      .populate({
+        path: "cancelRequests.boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
       });
     if (!box) {
       return res.status(404).json({ message: "Box non trouvé" });
@@ -416,6 +466,193 @@ exports.getBoxById = async (req, res) => {
   } catch (error) {
     console.error("[GET /api/boxes/:id] error", error);
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.requestCancel = async (req, res) => {
+  try {
+    await autoReleaseExpiredAndCancelledAllocations();
+    const boxId = req.params.id;
+    const { boutiqueId, type } = req.body;
+
+    if (!boutiqueId) {
+      return res.status(400).json({ message: "boutiqueId est requis" });
+    }
+
+    const cancelType = type === "immediate" ? "immediate" : "at_expiry";
+
+    const boutique = await Boutique.findById(boutiqueId);
+    if (!boutique) {
+      return res.status(404).json({ message: "Boutique non trouvée" });
+    }
+    if (String(boutique.owner) !== String(req.user._id)) {
+      return res.status(403).json({ message: "Accès interdit à cette boutique" });
+    }
+
+    const box = await Box.findById(boxId);
+    if (!box) {
+      return res.status(404).json({ message: "Box non trouvé" });
+    }
+
+    if (!box.boutique || String(box.boutique) !== String(boutiqueId)) {
+      return res.status(400).json({ message: "Cette box n'est pas allouée à cette boutique" });
+    }
+
+    const existingPending = (box.cancelRequests || []).find(
+      (r) => String(r.boutique) === String(boutiqueId) && r.status === "pending"
+    );
+    if (existingPending) {
+      return res.status(400).json({ message: "Demande de résiliation déjà envoyée" });
+    }
+
+    box.cancelRequests.push({ boutique: boutiqueId, type: cancelType, status: "pending" });
+    await box.save();
+
+    return res.status(201).json({ message: "Demande de résiliation envoyée" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getPendingCancelRequests = async (req, res) => {
+  try {
+    await autoReleaseExpiredAndCancelledAllocations();
+    const boxes = await Box.find({ "cancelRequests.status": "pending" })
+      .populate({
+        path: "cancelRequests.boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      })
+      .sort({ createdAt: -1 });
+
+    const pending = [];
+    for (const box of boxes) {
+      for (const r of box.cancelRequests || []) {
+        if (r.status === "pending") {
+          pending.push({
+            boxId: box._id,
+            boxName: box.name,
+            boxNumber: box.number,
+            cancelRequestId: r._id,
+            boutique: r.boutique,
+            type: r.type,
+            createdAt: r.createdAt
+          });
+        }
+      }
+    }
+
+    return res.json(pending);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.approveCancelRequest = async (req, res) => {
+  try {
+    await autoReleaseExpiredAndCancelledAllocations();
+    const box = await Box.findById(req.params.id);
+    if (!box) {
+      return res.status(404).json({ message: "Box non trouvé" });
+    }
+
+    const cancelReq = (box.cancelRequests || []).id(req.params.cancelRequestId);
+    if (!cancelReq) {
+      return res.status(404).json({ message: "Demande de résiliation non trouvée" });
+    }
+
+    if (cancelReq.status !== "pending") {
+      return res.status(400).json({ message: "Demande déjà traitée" });
+    }
+
+    const now = new Date();
+    if (cancelReq.type === "immediate") {
+      box.boutique = null;
+      box.rentExpiresAt = null;
+      box.rentCancelAt = null;
+    } else {
+      let cancelAt = now;
+      const expiry = box.rentExpiresAt ? new Date(box.rentExpiresAt) : null;
+      cancelAt = expiry && !Number.isNaN(expiry.getTime()) ? expiry : now;
+      if (cancelAt.getTime() < now.getTime()) cancelAt = now;
+      box.rentCancelAt = cancelAt;
+    }
+    cancelReq.status = "approved";
+    cancelReq.decidedAt = now;
+
+    for (const r of box.cancelRequests || []) {
+      if (String(r._id) !== String(cancelReq._id) && r.status === "pending") {
+        r.status = "rejected";
+        r.decidedAt = now;
+      }
+    }
+
+    await box.save();
+
+    const populated = await Box.findById(box._id)
+      .populate({
+        path: "boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      })
+      .populate({
+        path: "requests.boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      })
+      .populate({
+        path: "cancelRequests.boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      });
+
+    return res.json(withStatus(populated));
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.rejectCancelRequest = async (req, res) => {
+  try {
+    await autoReleaseExpiredAndCancelledAllocations();
+    const box = await Box.findById(req.params.id);
+    if (!box) {
+      return res.status(404).json({ message: "Box non trouvé" });
+    }
+
+    const cancelReq = (box.cancelRequests || []).id(req.params.cancelRequestId);
+    if (!cancelReq) {
+      return res.status(404).json({ message: "Demande de résiliation non trouvée" });
+    }
+
+    if (cancelReq.status !== "pending") {
+      return res.status(400).json({ message: "Demande déjà traitée" });
+    }
+
+    cancelReq.status = "rejected";
+    cancelReq.decidedAt = new Date();
+    await box.save();
+
+    const populated = await Box.findById(box._id)
+      .populate({
+        path: "boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      })
+      .populate({
+        path: "requests.boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      })
+      .populate({
+        path: "cancelRequests.boutique",
+        select: "name category owner",
+        populate: { path: "owner", select: "name email" }
+      });
+
+    return res.json(withStatus(populated));
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 

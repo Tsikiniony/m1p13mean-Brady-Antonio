@@ -69,6 +69,25 @@
     </button>
   </section>
 
+  <!-- Abonnements KPI -->
+  <section class="dashboard-card" style="margin-top: 20px;" *ngIf="!loading">
+    <h2>📊 Abonnements</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value">{{ totalSubscriptions }}</div>
+        <div class="kpi-label">Total abonnements</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">{{ totalPaidThisMonth | currency:'MGA':'symbol':'1.0-0' }}</div>
+        <div class="kpi-label">Payé ce mois</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">{{ totalUnpaidThisMonth | currency:'MGA':'symbol':'1.0-0' }}</div>
+        <div class="kpi-label">Non payé ce mois</div>
+      </div>
+    </div>
+  </section>
+
   <section class="dashboard-card" style="margin-top: 20px;" *ngIf="!loading">
     <h2>📦 Demande d'allocation de Box</h2>
     <p>Sélectionne une box disponible puis envoie une demande. L'admin devra valider.</p>
@@ -84,14 +103,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let box of availableBoxes">
+          <tr *ngFor="let box of availableBoxes" [class.cancelled]="isBoxCancelled(box)">
             <td>{{ box.name }}</td>
             <td>{{ box.number }}</td>
             <td>{{ box.rent }}</td>
             <td>
-              <button class="action-btn" (click)="requestBox(box)" [disabled]="isButtonDisabled(box)">
-                {{ isRequesting(box._id) ? 'Demande...' : 'Demander' }}
-              </button>
+              <ng-container *ngIf="isBoxCancelled(box); else normalAction">
+                <span class="muted">Disponible à partir du {{ getCancelAvailableDate(box) }}</span>
+              </ng-container>
+              <ng-template #normalAction>
+                <button class="action-btn" (click)="requestBox(box)" [disabled]="isButtonDisabled(box)">
+                  {{ isRequesting(box._id) ? 'Demande...' : 'Demander' }}
+                </button>
+              </ng-template>
             </td>
           </tr>
 

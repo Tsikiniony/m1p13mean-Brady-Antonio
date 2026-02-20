@@ -128,4 +128,39 @@ export class AdminBoxDetailsComponent implements OnInit, OnDestroy {
     if (Number.isNaN(d.getTime())) return String(rentExpiresAt);
     return d.toLocaleString();
   }
+
+  // Boutique helpers
+  getBoutiqueName(): string {
+    if (!this.box?.boutique) return '-';
+    if (typeof this.box.boutique === 'object') {
+      return this.box.boutique.name || '-';
+    }
+    return '-';
+  }
+
+  getBoutiqueCategory(): string {
+    if (!this.box?.boutique) return '';
+    if (typeof this.box.boutique === 'object') {
+      return this.box.boutique.category || '';
+    }
+    return '';
+  }
+
+  getBoutiqueEmail(): string {
+    if (!this.box?.boutique) return '';
+    if (typeof this.box.boutique === 'object') {
+      // La boutique n'a pas de champ email direct, on le récupère depuis owner si c'est un objet
+      const owner = this.box.boutique.owner;
+      if (typeof owner === 'object' && owner?.email) {
+        return owner.email;
+      }
+      return '';
+    }
+    return '';
+  }
+
+  getBoutiquePhone(): string {
+    // Le champ phone n'existe pas dans le modèle de données, on retourne une chaîne vide
+    return '';
+  }
 }

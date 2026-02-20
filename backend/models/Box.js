@@ -22,6 +22,10 @@ const boxSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+    rentCancelAt: {
+      type: Date,
+      default: null
+    },
     description: {
       type: String,
       default: ""
@@ -42,6 +46,36 @@ const boxSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Boutique",
             required: true
+          },
+          status: {
+            type: String,
+            enum: ["pending", "approved", "rejected"],
+            default: "pending"
+          },
+          decidedAt: {
+            type: Date,
+            default: null
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now
+          }
+        }
+      ],
+      default: []
+    },
+    cancelRequests: {
+      type: [
+        {
+          boutique: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Boutique",
+            required: true
+          },
+          type: {
+            type: String,
+            enum: ["at_expiry", "immediate"],
+            default: "at_expiry"
           },
           status: {
             type: String,

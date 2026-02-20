@@ -60,3 +60,13 @@
     transform: rotate(360deg);
   }
 }
+
+.section-divider {
+  margin: 24px 0 16px 0;
+  padding-top: 16px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.section {
+  margin-top: 16px;
+}

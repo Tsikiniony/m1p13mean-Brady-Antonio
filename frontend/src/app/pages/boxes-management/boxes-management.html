@@ -37,15 +37,6 @@
         <option value="prise">prise</option>
       </select>
     </div>
-
-    <div class="filter-item">
-      <label>Loyer</label>
-      <select [(ngModel)]="rentFilter">
-        <option value="">Tous</option>
-        <option value="active">actif</option>
-        <option value="expired">expiré</option>
-      </select>
-    </div>
   </div>
 
   <div class="table-container" *ngIf="!loading">
@@ -107,23 +98,21 @@
           <th>Numéro</th>
           <th>Loyer</th>
           <th>Boutique</th>
-          <th>Expiration</th>
           <th>Statut</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <ng-container *ngFor="let box of filteredBoxes">
-        <tr class="box-row">
+        <tr class="box-row clickable" [routerLink]="['/admin/boxes', box._id]">
           <td>{{ box.name }}</td>
           <td>
             <div class="box-number">{{ box.number }}</div>
           </td>
           <td>{{ box.rent }}</td>
           <td>{{ getBoutiqueLabel(box) }}</td>
-          <td>{{ getRentExpiresAtLabel(box) }}</td>
           <td>{{ getStatusLabel(box) }}</td>
-          <td>
+          <td (click)="$event.stopPropagation()">
             <div class="actions">
               <button
                 class="btn-edit icon-btn"
@@ -144,16 +133,6 @@
                 ✏️
               </button>
               <button
-                class="btn-pay icon-btn"
-                (click)="extendRent(box)"
-                *ngIf="box.boutique"
-                [disabled]="isDeleting(box._id) || isExtendingRent(box._id)"
-                aria-label="Valider paiement (+1 mois)"
-                title="Valider paiement (+1 mois)"
-              >
-                {{ isExtendingRent(box._id) ? '⏳' : '💳' }}
-              </button>
-              <button
                 class="btn-delete icon-btn"
                 (click)="deleteBox(box._id)"
                 [disabled]="isDeleting(box._id)"
@@ -168,7 +147,7 @@
         </tr>
         </ng-container>
         <tr *ngIf="filteredBoxes.length === 0">
-          <td colspan="7" style="text-align: center; padding: 30px;">Aucun box trouvé</td>
+          <td colspan="6" style="text-align: center; padding: 30px;">Aucun box trouvé</td>
         </tr>
       </tbody>
     </table>
