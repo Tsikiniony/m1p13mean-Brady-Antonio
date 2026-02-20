@@ -13,9 +13,12 @@ import { Box, BoxService } from '../../services/box.service';
 export class BoutiqueRentsComponent implements OnInit {
   loading = false;
   error = '';
+  info = '';
   boxes: Box[] = [];
 
   filter: 'all' | 'active' | 'expired' = 'all';
+
+  requestingCancelBoxId: string | null = null;
 
   private platformId = inject(PLATFORM_ID);
 
@@ -29,6 +32,7 @@ export class BoutiqueRentsComponent implements OnInit {
   load(): void {
     this.loading = true;
     this.error = '';
+    this.info = '';
 
     this.boxService.getMyRents().subscribe({
       next: (boxes) => {
@@ -40,6 +44,64 @@ export class BoutiqueRentsComponent implements OnInit {
         this.error = err?.error?.message || err?.error?.error || 'Erreur chargement loyers';
         console.error(err);
         this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private getBoxBoutiqueId(box: Box): string | null {
+    const b = box?.boutique;
+    if (!b) return null;
+    if (typeof b === 'object' && b._id) return b._id;
+    if (typeof b === 'string') return b;
+    return null;
+  }
+
+  isRequestingCancel(boxId: string | undefined): boolean {
+    return !!boxId && boxId === this.requestingCancelBoxId;
+  }
+
+  hasPendingCancelRequest(box: Box): boolean {
+    const boutiqueId = this.getBoxBoutiqueId(box);
+    if (!boutiqueId) return false;
+    const reqs = Array.isArray(box.cancelRequests) ? box.cancelRequests : [];
+    return reqs.some((r) => String(r.boutique) === String(boutiqueId) && r.status === 'pending');
+  }
+
+  requestCancel(box: Box, type: 'at_expiry' | 'immediate'): void {
+    if (!box?._id) return;
+    const boutiqueId = this.getBoxBoutiqueId(box);
+    if (!boutiqueId) {
+      this.error = 'Boutique introuvable pour cette box';
+      return;
+    }
+
+    if (this.hasPendingCancelRequest(box)) {
+      this.error = 'Demande de résiliation déjà envoyée';
+      return;
+    }
+
+    const msg =
+      type === 'immediate'
+        ? "Demander une résiliation immédiate ? (l'admin doit valider)"
+        : "Demander une résiliation à l'échéance ? (l'admin doit valider)";
+    const ok = confirm(msg);
+    if (!ok) return;
+
+    this.requestingCancelBoxId = box._id;
+    this.error = '';
+    this.info = '';
+
+    this.boxService.requestCancel(box._id, boutiqueId, type).subscribe({
+      next: () => {
+        this.info = 'Demande envoyée. Attente de validation admin.';
+        this.requestingCancelBoxId = null;
+        this.load();
+      },
+      error: (err) => {
+        this.error = err?.error?.message || err?.error?.error || 'Erreur demande résiliation';
+        console.error(err);
+        this.requestingCancelBoxId = null;
         this.cdr.detectChanges();
       }
     });
@@ -58,6 +120,12 @@ export class BoutiqueRentsComponent implements OnInit {
     const d = new Date(v);
     if (Number.isNaN(d.getTime())) return String(v);
     return d.toLocaleDateString();
+  }
+
+  getStatusLabel(box: Box): string {
+    const s = box?.status || (box?.boutique ? 'prise' : 'non prise');
+    if (s === 'resilié') return 'Résilié';
+    return this.isExpired(box) ? 'Expiré' : 'Actif';
   }
 
   get filteredBoxes(): Box[] {

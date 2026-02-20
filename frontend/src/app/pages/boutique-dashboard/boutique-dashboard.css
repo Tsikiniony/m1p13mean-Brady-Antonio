@@ -179,6 +179,40 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.boxes-table tr.cancelled {
+  opacity: 0.5;
+  background-color: #f9fafb;
+}
+
+/* KPI Abonnements */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.kpi-card {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.kpi-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
 .error-message {
   background: #fee2e2;
   color: #991b1b;

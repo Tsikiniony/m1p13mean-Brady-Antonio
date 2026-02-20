@@ -45,4 +45,26 @@
     <div class="value">{{ box.description }}</div>
   </div>
 
+  <!-- Boutique associée -->
+  <div class="section-divider" *ngIf="box.boutique"></div>
+  <div class="section" *ngIf="box.boutique">
+    <h3 style="margin:0 0 12px 0; color: #111827;">🏪 Boutique associée</h3>
+    <div class="row">
+      <div class="label">Nom</div>
+      <div class="value">{{ getBoutiqueName() }}</div>
+    </div>
+    <div class="row" *ngIf="getBoutiqueCategory()">
+      <div class="label">Catégorie</div>
+      <div class="value">{{ getBoutiqueCategory() }}</div>
+    </div>
+    <div class="row" *ngIf="getBoutiqueEmail()">
+      <div class="label">Email</div>
+      <div class="value">{{ getBoutiqueEmail() }}</div>
+    </div>
+    <div class="row" *ngIf="getBoutiquePhone()">
+      <div class="label">Téléphone</div>
+      <div class="value">{{ getBoutiquePhone() }}</div>
+    </div>
+  </div>
+
 </div>

@@ -10,13 +10,22 @@ export interface Box {
   rent: number;
   description?: string;
   image?: string;
-  status?: 'prise' | 'non prise';
+  status?: 'prise' | 'non prise' | 'resilié';
   rentExpiresAt?: string | null;
+  rentCancelAt?: string | null;
   requests?: Array<{
     _id?: string;
     boutique: string;
     status: 'pending' | 'approved' | 'rejected';
     createdAt?: string;
+  }>;
+  cancelRequests?: Array<{
+    _id?: string;
+    boutique: string;
+    type: 'at_expiry' | 'immediate';
+    status: 'pending' | 'approved' | 'rejected';
+    createdAt?: string;
+    decidedAt?: string | null;
   }>;
   boutique?:
     | string
@@ -59,6 +68,29 @@ export interface PendingBoxRequest {
   status: 'pending' | 'approved' | 'rejected';
   createdAt?: string;
   decidedAt?: string | null;
+}
+
+export interface PendingCancelRequest {
+  boxId: string;
+  boxName?: string;
+  boxNumber?: number;
+  cancelRequestId: string;
+  boutique:
+    | string
+    | {
+        _id: string;
+        name: string;
+        category?: string | null;
+        owner?:
+          | string
+          | {
+              _id?: string;
+              name?: string;
+              email?: string;
+            };
+      };
+  type: 'at_expiry' | 'immediate';
+  createdAt?: string;
 }
 
 export type CreateBoxPayload = {
@@ -132,6 +164,34 @@ export class BoxService {
 
   extendRent(boxId: string): Observable<Box> {
     return this.http.put<Box>(`${this.API_URL}/${boxId}/rent/extend`, {}, { headers: this.getHeaders() });
+  }
+
+  requestCancel(boxId: string, boutiqueId: string, type: 'at_expiry' | 'immediate'): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/${boxId}/cancel/request`,
+      { boutiqueId, type: type === 'immediate' ? 'immediate' : 'at_expiry' },
+      { headers: this.getHeaders() }
+    );
+  }
+
+  getPendingCancelRequests(): Observable<PendingCancelRequest[]> {
+    return this.http.get<PendingCancelRequest[]>(`${this.API_URL}/cancel-requests/pending`, { headers: this.getHeaders() });
+  }
+
+  approveCancelRequest(boxId: string, cancelRequestId: string): Observable<Box> {
+    return this.http.put<Box>(
+      `${this.API_URL}/${boxId}/cancel-requests/${cancelRequestId}/approve`,
+      {},
+      { headers: this.getHeaders() }
+    );
+  }
+
+  rejectCancelRequest(boxId: string, cancelRequestId: string): Observable<Box> {
+    return this.http.put<Box>(
+      `${this.API_URL}/${boxId}/cancel-requests/${cancelRequestId}/reject`,
+      {},
+      { headers: this.getHeaders() }
+    );
   }
 
   createBox(box: CreateBoxPayload): Observable<Box> {

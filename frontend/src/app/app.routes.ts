@@ -11,6 +11,7 @@ import { BoutiqueBoxDetailsComponent } from './pages/boutique-box-details/boutiq
 import { BoutiqueRentsComponent } from './pages/boutique-rents/boutique-rents';
 import { UsersManagementComponent } from './pages/users-management/users-management';
 import { BoxesManagementComponent } from './pages/boxes-management/boxes-management';
+import { AdminRentsComponent } from './pages/admin-rents/admin-rents';
 import { BoxDetailsComponent } from './pages/box-details/box-details';
 import { AdminBoxDetailsComponent } from './pages/admin-box-details/admin-box-details';
 import { AdminHomeComponent } from './pages/admin-home/admin-home';
@@ -47,6 +48,7 @@ export const routes: Routes = [
       { path: 'users', component: UsersManagementComponent },
       { path: 'boxes/:id', component: AdminBoxDetailsComponent },
       { path: 'boxes', component: BoxesManagementComponent },
+      { path: 'rents', component: AdminRentsComponent },
       { path: 'boutique', component: BoutiqueDashboardComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

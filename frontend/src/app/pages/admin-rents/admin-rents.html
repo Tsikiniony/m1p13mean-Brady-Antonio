@@ -1,0 +1,90 @@
+<div class="page">
+  <div class="header">
+    <h1>Gestion des loyers</h1>
+    <div class="filters">
+      <button type="button" class="chip" [class.active]="filter === 'all'" (click)="filter = 'all'">Tous</button>
+      <button type="button" class="chip" [class.active]="filter === 'active'" (click)="filter = 'active'">Actifs</button>
+      <button type="button" class="chip" [class.active]="filter === 'expired'" (click)="filter = 'expired'">Expirés</button>
+    </div>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="info" *ngIf="info">{{ info }}</div>
+  <div class="loading" *ngIf="loading">Chargement...</div>
+
+  <div class="card" *ngIf="!loading">
+    <h2 style="margin: 0 0 12px 0;">Demandes de résiliation en attente</h2>
+
+    <div class="loading" *ngIf="loadingCancelRequests">Chargement...</div>
+
+    <table class="table" *ngIf="!loadingCancelRequests && pendingCancelRequests.length > 0">
+      <thead>
+        <tr>
+          <th>Box</th>
+          <th>Boutique</th>
+          <th>Type</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of pendingCancelRequests">
+          <td>{{ r.boxName || ('B' + r.boxNumber) }}</td>
+          <td>{{ getCancelBoutiqueLabel(r) }}</td>
+          <td>{{ getCancelTypeLabel(r) }}</td>
+          <td>
+            <div class="actions">
+              <button type="button" class="btn" (click)="approveCancel(r)" [disabled]="isHandlingCancelRequest(r.cancelRequestId)">
+                {{ isHandlingCancelRequest(r.cancelRequestId) ? '...' : 'Valider' }}
+              </button>
+              <button type="button" class="btn" (click)="rejectCancel(r)" [disabled]="isHandlingCancelRequest(r.cancelRequestId)">
+                {{ isHandlingCancelRequest(r.cancelRequestId) ? '...' : 'Refuser' }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="empty" *ngIf="!loadingCancelRequests && pendingCancelRequests.length === 0">
+      Aucune demande.
+    </div>
+  </div>
+
+  <div class="card" *ngIf="!loading">
+    <table class="table" *ngIf="filteredBoxes.length > 0">
+      <thead>
+        <tr>
+          <th>Box</th>
+          <th>Boutique</th>
+          <th>Loyer</th>
+          <th>Expiration</th>
+          <th>Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let box of filteredBoxes">
+          <td>{{ getBoxTitle(box) }}</td>
+          <td>{{ getBoutiqueLabel(box) }}</td>
+          <td>{{ box.rent }}</td>
+          <td>{{ getExpiresLabel(box) }}</td>
+          <td>
+            <span class="badge" [class]="getStatusBadgeClass(box)">
+              {{ getStatusLabel(box) }}
+            </span>
+          </td>
+          <td>
+            <button type="button" class="btn" (click)="extendRent(box)" [disabled]="isExtendingRent(box._id) || isCancelled(box)" *ngIf="!isCancelled(box)">
+              {{ isExtendingRent(box._id) ? 'Validation...' : 'Valider paiement (+1 mois)' }}
+            </button>
+            <span *ngIf="isCancelled(box)" class="muted">—</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="empty" *ngIf="filteredBoxes.length === 0">
+      Aucun loyer.
+    </div>
+  </div>
+</div>

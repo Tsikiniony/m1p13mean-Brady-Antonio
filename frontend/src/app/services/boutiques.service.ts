@@ -62,6 +62,10 @@ export class BoutiquesService {
     return this.http.get<BoutiqueWithBoxFlag[]>(`${this.API_URL}/with-box-flag`, { headers: this.getHeaders() });
   }
 
+  getAllBoutiques(): Observable<Boutique[]> {
+    return this.http.get<Boutique[]>(`${this.API_URL}`, { headers: this.getHeaders() });
+  }
+
   getMineById(id: string): Observable<Boutique> {
     return this.http.get<Boutique>(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }
