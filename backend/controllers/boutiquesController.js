@@ -1,5 +1,6 @@
 const Boutique = require("../models/Boutique");
 const Box = require("../models/Box");
+const Purchase = require("../models/Purchase");
 
 exports.listMine = async (req, res) => {
   try {
@@ -56,6 +57,60 @@ exports.getMineById = async (req, res) => {
       return res.status(404).json({ message: "Boutique non trouvée" });
     }
     res.json(boutique);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getTopBoutiquesByRevenue = async (req, res) => {
+  try {
+    const limit = Math.max(1, Math.min(20, Number(req.query.limit) || 5));
+
+    const rows = await Purchase.aggregate([
+      {
+        $lookup: {
+          from: "deliveries",
+          localField: "_id",
+          foreignField: "purchase",
+          as: "delivery"
+        }
+      },
+      {
+        $match: {
+          "delivery.status": "livre"
+        }
+      },
+      {
+        $group: {
+          _id: "$boutique",
+          revenue: { $sum: "$total" },
+          salesCount: { $sum: 1 }
+        }
+      },
+      { $sort: { revenue: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: "boutiques",
+          localField: "_id",
+          foreignField: "_id",
+          as: "boutique"
+        }
+      },
+      { $unwind: { path: "$boutique", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          _id: 0,
+          boutiqueId: "$_id",
+          revenue: 1,
+          salesCount: 1,
+          name: "$boutique.name",
+          category: "$boutique.category"
+        }
+      }
+    ]);
+
+    res.json(rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

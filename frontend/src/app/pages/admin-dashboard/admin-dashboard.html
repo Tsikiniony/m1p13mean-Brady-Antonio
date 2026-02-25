@@ -1,23 +1,32 @@
 <div class="admin-layout">
   <nav class="navbar">
     <div class="navbar-brand">
-      <h2>👑 Admin Panel</h2>
+      <h2>👑 Administrateur</h2>
     </div>
-    <div class="navbar-links">
-      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
-        <span>📊</span> Dashboard
-      </a>
-      <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
-        <span>👥</span> Users
-      </a>
-      <a routerLink="/admin/boxes" routerLinkActive="active" class="nav-link">
-        <span>📦</span> Box
-      </a>
-      <a routerLink="/admin/rents" routerLinkActive="active" class="nav-link">
-        <span>💳</span> Loyers
-      </a>
+
+    <button type="button" class="hamburger" (click)="toggleMenu()" aria-label="Menu">
+      ☰
+    </button>
+
+    <div class="navbar-menu" [class.open]="menuOpen">
+      <div class="navbar-links">
+        <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
+          <span>📊</span> Dashboard
+        </a>
+        <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+          <span>👥</span> Users
+        </a>
+        <a routerLink="/admin/boxes" routerLinkActive="active" class="nav-link">
+          <span>📦</span> Box
+        </a>
+        <a routerLink="/admin/rents" routerLinkActive="active" class="nav-link">
+          <span>💳</span> Loyers
+        </a>
+      </div>
+      <button type="button" (click)="logout()" class="logout-btn mobile-logout">🚪 Logout</button>
     </div>
-    <button (click)="logout()" class="logout-btn">🚪 Logout</button>
+
+    <button type="button" (click)="logout()" class="logout-btn desktop-logout">🚪 Logout</button>
   </nav>
 
   <div class="content">

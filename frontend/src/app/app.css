@@ -180,6 +180,8 @@
 
 .public-container{width:100%}
 
+.full-container{width:100%;min-height:100vh;padding:0}
+
 /* Effet de glassmorphism */
 .glass-effect {
   background: rgba(255, 255, 255, 0.1);

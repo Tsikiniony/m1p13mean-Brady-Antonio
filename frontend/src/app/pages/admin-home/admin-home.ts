@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Box, BoxService } from '../../services/box.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-home',
@@ -18,13 +19,53 @@ export class AdminHomeComponent implements OnInit {
 
   boxes: Box[] = [];
 
+  topBoutiquesRevenue: Array<{ boutiqueId: string; name?: string; category?: string | null; revenue: number; salesCount: number }> = [];
+
   private platformId = inject(PLATFORM_ID);
 
-  constructor(private boxService: BoxService, private cdr: ChangeDetectorRef) {}
+  constructor(private boxService: BoxService, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     this.loadStats();
+    this.loadTopBoutiquesRevenue();
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    let token: string | null = null;
+    if (isPlatformBrowser(this.platformId)) {
+      token = localStorage.getItem('token');
+    }
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (token) headers = headers.set('Authorization', `Bearer ${token}`);
+    return headers;
+  }
+
+  loadTopBoutiquesRevenue(): void {
+    this.http
+      .get<
+        Array<{ boutiqueId: string; name?: string; category?: string | null; revenue: number; salesCount: number }>
+      >('http://localhost:5000/api/users/stats/top-boutiques-revenue?limit=5', { headers: this.getAuthHeaders() })
+      .subscribe({
+        next: (rows) => {
+          this.topBoutiquesRevenue = rows || [];
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error(err);
+          // Ne pas bloquer le dashboard si stats indisponibles
+        }
+      });
+  }
+
+  get topRevenueMax(): number {
+    return Math.max(0, ...(this.topBoutiquesRevenue || []).map((r) => Number(r.revenue) || 0));
+  }
+
+  barWidthPct(revenue: number): number {
+    const max = this.topRevenueMax;
+    if (max <= 0) return 0;
+    return Math.round(((Number(revenue) || 0) / max) * 100);
   }
 
   loadStats(): void {

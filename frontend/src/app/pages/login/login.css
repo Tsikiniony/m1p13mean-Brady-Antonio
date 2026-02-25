@@ -3,23 +3,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100svh;
   width: 100%;
-  padding: 20px;
+  padding: 16px;
+  overflow: hidden;
   animation: fadeIn 0.6s ease-out;
 }
 
 /* Carte de login */
 .login-container {
   background: rgba(255, 255, 255, 0.95);
-  padding: 50px 40px;
+  padding: clamp(22px, 4vh, 50px) clamp(18px, 4vw, 40px);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
-  width: 400px;
+  width: min(420px, 100%);
+  max-height: calc(100svh - 32px);
   animation: slideIn 0.8s ease-out;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .login-types{
@@ -41,7 +45,15 @@
   cursor:pointer;
   box-shadow:none;
   text-transform:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
 }
+
+.type-icon{font-size:18px; line-height:1}
+
+.type-label{font-size:14px; letter-spacing:.2px}
 
 .type-btn:hover{background:#f3f4f6}
 
@@ -60,7 +72,11 @@
   animation: slideSwap .45s ease both;
 }
 
-.register-link{margin-top: 12px; text-align: center; position:relative; z-index:1;}
+.register-link{margin-top: 8px; text-align: center; position:relative; z-index:1;}
+
+.register-link a{font-size:14px; font-weight:800; color:#111827; text-decoration:none}
+
+.register-link a:hover{text-decoration:underline}
 
 @keyframes slideSwap{
   from{opacity:0; transform: translateX(18px)}
@@ -87,8 +103,8 @@
 h2 {
   text-align: center;
   color: #333;
-  margin-bottom: 40px;
-  font-size: 32px;
+  margin-bottom: clamp(12px, 2vh, 22px);
+  font-size: clamp(24px, 3.2vh, 32px);
   font-weight: 700;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
@@ -112,7 +128,7 @@ h2::after {
 
 /* Groupe de formulaire */
 .form-group {
-  margin-bottom: 25px;
+  margin-bottom: clamp(12px, 2vh, 20px);
   position: relative;
 }
 
@@ -145,7 +161,7 @@ h2::after {
 }
 
 /* Bouton de login */
-button {
+.form button {
   width: 100%;
   padding: 15px;
   margin-top: 20px;
@@ -164,7 +180,7 @@ button {
   text-transform: uppercase;
 }
 
-button::before {
+.form button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -180,16 +196,16 @@ button::before {
   transition: left 0.5s;
 }
 
-button:hover::before {
+.form button:hover::before {
   left: 100%;
 }
 
-button:hover {
+.form button:hover {
   transform: translateY(-3px);
   box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
 }
 
-button:active {
+.form button:active {
   transform: translateY(-1px);
   box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
 }
@@ -242,4 +258,39 @@ button:active {
 
 button {
   animation: slideIn 0.6s ease-out 0.3s backwards;
+}
+
+@media (max-width: 420px) {
+  :host {
+    padding: 12px;
+  }
+
+  .login-container {
+    padding: 26px 18px;
+    border-radius: 16px;
+  }
+
+  h2 {
+    font-size: 26px;
+    margin-bottom: 16px;
+  }
+
+  .login-types {
+    margin: 14px 0 16px;
+    gap: 8px;
+  }
+
+  .type-btn {
+    padding: 10px 10px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form button {
+    margin-top: 10px;
+    padding: 14px;
+    font-size: 16px;
+  }
 }

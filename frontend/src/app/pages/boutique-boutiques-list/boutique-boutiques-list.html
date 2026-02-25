@@ -34,32 +34,34 @@
 
     <div class="loading" *ngIf="loading">Chargement...</div>
 
-    <table class="table" *ngIf="!loading">
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Catégorie</th>
-          <th>Box</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let b of filteredBoutiques">
-          <td>{{ b.name }}</td>
-          <td>{{ b.category || '-' }}</td>
-          <td>
-            <span [class.ok]="b.hasBox" [class.ko]="!b.hasBox">
-              {{ b.hasBox ? 'Oui' : 'Non' }}
-            </span>
-          </td>
-          <td>
-            <a class="link" [routerLink]="['/boutique/boutiques', b._id]">Détails</a>
-          </td>
-        </tr>
-        <tr *ngIf="filteredBoutiques.length === 0">
-          <td colspan="4" style="text-align:center;padding:12px;">Aucune boutique</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Catégorie</th>
+            <th>Box</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of filteredBoutiques">
+            <td>{{ b.name }}</td>
+            <td>{{ b.category || '-' }}</td>
+            <td>
+              <span [class.ok]="b.hasBox" [class.ko]="!b.hasBox">
+                {{ b.hasBox ? 'Oui' : 'Non' }}
+              </span>
+            </td>
+            <td>
+              <a class="link" [routerLink]="['/boutique/boutiques', b._id]">Détails</a>
+            </td>
+          </tr>
+          <tr *ngIf="filteredBoutiques.length === 0">
+            <td colspan="4" style="text-align:center;padding:12px;">Aucune boutique</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 </div>
