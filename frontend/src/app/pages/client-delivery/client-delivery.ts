@@ -71,10 +71,30 @@ export class ClientDeliveryComponent implements OnInit, AfterViewInit, OnDestroy
     const L = this.leaflet;
 
     this.map = (L as any).map('deliveryMap').setView([defaultLat, defaultLng], 13);
-    (L as any).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+    // Base layers
+    const osmLayer = (L as any).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap'
-    }).addTo(this.map);
+    });
+
+    const satelliteLayer = (L as any).tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+      }
+    );
+
+    // Add OSM by default
+    osmLayer.addTo(this.map);
+
+    // Layer control
+    const baseMaps = {
+      'Plan': osmLayer,
+      'Satellite': satelliteLayer
+    };
+    (L as any).control.layers(baseMaps).addTo(this.map);
 
     this.map.on('click', (e: any) => {
       const p = e?.latlng;

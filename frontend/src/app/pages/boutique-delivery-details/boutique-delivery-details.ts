@@ -83,10 +83,30 @@ export class BoutiqueDeliveryDetailsComponent implements OnInit, AfterViewInit, 
     const L = this.leaflet;
 
     this.map = (L as any).map('boutiqueDeliveryMap', { zoomControl: true, dragging: true }).setView([lat, lng], 15);
-    (L as any).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+    // Base layers
+    const osmLayer = (L as any).tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap'
-    }).addTo(this.map);
+    });
+
+    const satelliteLayer = (L as any).tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri'
+      }
+    );
+
+    // Add OSM by default
+    osmLayer.addTo(this.map);
+
+    // Layer control
+    const baseMaps = {
+      'Plan': osmLayer,
+      'Satellite': satelliteLayer
+    };
+    (L as any).control.layers(baseMaps).addTo(this.map);
 
     this.marker = (L as any).marker([lat, lng]).addTo(this.map);
     this.cdr.detectChanges();
