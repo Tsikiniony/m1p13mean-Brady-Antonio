@@ -19,6 +19,10 @@ export interface PublicArticle {
   updatedAt?: string;
 }
 
+export type PublicStock = {
+  quantity: number;
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -33,5 +37,9 @@ export class PublicArticlesService {
 
   getById(id: string): Observable<PublicArticle> {
     return this.http.get<PublicArticle>(`${this.API_URL}/${id}`);
+  }
+
+  getStock(id: string): Observable<PublicStock> {
+    return this.http.get<PublicStock>(`${this.API_URL}/${id}/stock`);
   }
 }

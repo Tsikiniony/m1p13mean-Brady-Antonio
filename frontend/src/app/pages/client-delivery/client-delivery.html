@@ -1,0 +1,30 @@
+<div class="page">
+  <a class="back" routerLink="/client/cart">← Retour au panier</a>
+
+  <h1 class="title">Livraison</h1>
+  <div class="subtitle">Entre ton numéro mobile et choisis ton lieu de livraison sur la carte.</div>
+
+  <div class="card">
+    <div class="form">
+      <label>
+        Numéro mobile
+        <input [(ngModel)]="mobile" placeholder="Ex: 034 00 000 00" />
+      </label>
+
+      <div class="hint">
+        Clique sur la carte pour placer un marqueur.
+        <span *ngIf="lat !== null && lng !== null">(Lat: {{ lat | number:'1.5-5' }}, Lng: {{ lng | number:'1.5-5' }})</span>
+      </div>
+
+      <div id="deliveryMap" class="map"></div>
+
+      <button class="btn" type="button" (click)="submit()" [disabled]="loading">
+        {{ loading ? 'Validation...' : 'Valider la commande' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="toast" *ngIf="toastOpen" (click)="toastOpen=false">
+    <div class="toast-card" [class.toast-error]="toastKind==='error'">{{ toastMessage }}</div>
+  </div>
+</div>

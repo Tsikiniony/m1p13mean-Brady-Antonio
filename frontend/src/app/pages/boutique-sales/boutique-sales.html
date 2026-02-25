@@ -1,0 +1,53 @@
+<div class="page">
+  <div class="head">
+    <div>
+      <h1 class="title">Ventes</h1>
+      <div class="subtitle">Achats effectués dans ta boutique</div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+  <div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+  <div class="list" *ngIf="!loading && !error">
+    <div class="empty" *ngIf="sales.length === 0">Aucune vente pour le moment.</div>
+
+    <div class="sale" *ngFor="let s of sales; trackBy: trackById">
+      <div class="row">
+        <div class="left">
+          <div class="client">{{ getClientLabel(s) }}</div>
+          <div class="meta">
+            <span class="shop" *ngIf="getBoutiqueName(s)">🏪 {{ getBoutiqueName(s) }}</span>
+            <span class="dot" *ngIf="getBoutiqueName(s)">•</span>
+            <span>{{ s.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span class="dot">•</span>
+            <span>{{ getItemsCount(s) }} article(s)</span>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="total">{{ s.total | number:'1.0-2' }} Ar</div>
+          <button class="expand" type="button" (click)="toggleExpanded(s, $event)" [attr.aria-expanded]="isExpanded(s)" aria-label="Afficher les articles">
+            <span class="chev">{{ isExpanded(s) ? '🔼' : '🔽' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="details" *ngIf="isExpanded(s)">
+        <div class="details-head">
+          <div>Article</div>
+          <div style="text-align:right;">Qté</div>
+          <div style="text-align:right;">Prix</div>
+          <div style="text-align:right;">Sous-total</div>
+        </div>
+
+        <div class="details-row" *ngFor="let it of s.items">
+          <div class="item-name">{{ it.name }}</div>
+          <div style="text-align:right;">{{ it.quantity }}</div>
+          <div style="text-align:right;">{{ it.price | number:'1.0-2' }} Ar</div>
+          <div style="text-align:right;">{{ getItemSubtotal(it.price, it.quantity) | number:'1.0-2' }} Ar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+.page{padding:24px;max-width:1000px;margin:0 auto}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.head-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.title{margin:0;font-size:28px;font-weight:900;letter-spacing:-.02em}
+.subtitle{margin-top:4px;color:#6b7280}
+.success{background:#dcfce7;border:1px solid #bbf7d0;color:#166534;padding:10px 12px;border-radius:10px;margin-bottom:10px}
+.error{background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:10px 12px;border-radius:10px;margin-bottom:10px}
+.empty{padding:14px;border:1px dashed #d1d5db;border-radius:14px;color:#6b7280}
+.link{margin-left:8px;color:#2563eb;text-decoration:none;font-weight:800}
+.link:hover{text-decoration:underline}
+.btn{appearance:none;border:1px solid #111827;background:#111827;color:#fff;font-weight:900;border-radius:10px;padding:10px 12px;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:96px 1fr auto auto auto;gap:12px;align-items:center;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:10px}
+.thumb{width:96px;height:72px;border-radius:10px;overflow:hidden;background:#f3f4f6;border:1px solid #e5e7eb}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.name{font-weight:900}
+.price{color:#6b7280;font-size:13px;margin-top:4px}
+.qty{display:flex;align-items:center;gap:8px}
+.icon{width:34px;height:34px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-weight:900;cursor:pointer}
+.q{min-width:22px;text-align:center;font-weight:900}
+.sub{font-weight:900;white-space:nowrap}
+.rm{display:flex;justify-content:flex-end}
+.link-danger{border:0;background:transparent;color:#dc2626;font-weight:900;cursor:pointer}
+.btn-danger{appearance:none;border:1px solid #dc2626;background:#dc2626;color:#fff;font-weight:900;border-radius:10px;padding:10px 12px;cursor:pointer}
+.btn-danger:disabled{opacity:.5;cursor:not-allowed}
+.footer{display:flex;justify-content:flex-end;gap:14px;align-items:baseline;background:#111827;color:#fff;border-radius:14px;padding:14px}
+.total-label{opacity:.8}
+.total{font-size:20px;font-weight:900}
+@media (max-width: 720px){.page{padding:16px}.item{grid-template-columns:72px 1fr auto;grid-template-rows:auto auto;align-items:start}.thumb{width:72px;height:54px}.qty{grid-column:2}.sub{grid-column:3;grid-row:1}.rm{grid-column:2/-1;justify-content:flex-start}}

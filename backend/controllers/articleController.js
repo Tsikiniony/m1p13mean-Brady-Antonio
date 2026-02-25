@@ -1,5 +1,6 @@
 const Article = require("../models/Article");
 const Boutique = require("../models/Boutique");
+const Stock = require("../models/Stock");
 
 async function assertMineBoutiqueOr404({ boutiqueId, ownerId }) {
   const boutique = await Boutique.findOne({ _id: boutiqueId, owner: ownerId });
@@ -17,7 +18,17 @@ exports.listMineForBoutique = async (req, res) => {
     await assertMineBoutiqueOr404({ boutiqueId, ownerId: req.user._id });
 
     const articles = await Article.find({ boutique: boutiqueId }).sort({ createdAt: -1 });
-    res.json(articles);
+
+    const articleIds = articles.map((a) => a._id);
+    const stocks = await Stock.find({ boutique: boutiqueId, article: { $in: articleIds } }).select('article quantity');
+    const byArticleId = new Map(stocks.map((s) => [String(s.article), s.quantity]));
+
+    const payload = articles.map((a) => ({
+      ...a.toObject(),
+      stock: byArticleId.get(String(a._id)) ?? 0
+    }));
+
+    res.json(payload);
   } catch (error) {
     res.status(error.statusCode || 500).json({ error: error.message });
   }
@@ -28,7 +39,7 @@ exports.createMineForBoutique = async (req, res) => {
     const boutiqueId = req.params.id;
     await assertMineBoutiqueOr404({ boutiqueId, ownerId: req.user._id });
 
-    const { name, price, description } = req.body;
+    const { name, price, description, stock } = req.body;
 
     if (typeof name !== "string" || !name.trim()) {
       return res.status(400).json({ message: "Le nom est requis" });
@@ -53,7 +64,16 @@ exports.createMineForBoutique = async (req, res) => {
       image: imageUrl
     });
 
-    res.status(201).json(article);
+    const nStock = Number(stock);
+    if (Number.isFinite(nStock) && nStock >= 0) {
+      await Stock.findOneAndUpdate(
+        { boutique: boutiqueId, article: article._id },
+        { $set: { quantity: Math.floor(nStock) } },
+        { upsert: true, new: true }
+      );
+    }
+
+    res.status(201).json({ ...article.toObject(), stock: Number.isFinite(nStock) && nStock >= 0 ? Math.floor(nStock) : 0 });
   } catch (error) {
     res.status(error.statusCode || 500).json({ error: error.message });
   }

@@ -1,0 +1,40 @@
+<div class="page">
+  <h1 class="title">Livraisons</h1>
+  <div class="subtitle">Toutes les livraisons liées à tes boutiques</div>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+  <div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+  <div class="card" *ngIf="!loading && !error">
+    <div class="empty" *ngIf="deliveries.length===0">Aucune livraison.</div>
+
+    <div class="table" *ngIf="deliveries.length>0">
+      <div class="thead">
+        <div>Boutique</div>
+        <div>Client</div>
+        <div>Mobile</div>
+        <div>Statut</div>
+        <div>Date</div>
+        <div style="text-align:right;">Action</div>
+      </div>
+
+      <div class="row" *ngFor="let d of deliveries; trackBy: trackById">
+        <div class="cell"><strong>{{ getBoutiqueName(d) }}</strong></div>
+        <div class="cell">{{ getClientName(d) }}</div>
+        <div class="cell">{{ d.mobile }}</div>
+        <div class="cell"><span class="badge" [class.badge-warn]="d.status==='en_attente'" [class.badge-info]="d.status==='en_cours'" [class.badge-ok]="d.status==='livre'">{{ getStatusLabel(d) }}</span></div>
+        <div class="cell">{{ d.createdAt | date:'short' }}</div>
+        <div class="cell" style="text-align:right;">
+          <a class="btn" [routerLink]="['/boutique/deliveries', d._id]">Détail</a>
+          <button class="btn-lite" type="button" *ngIf="d.status!=='livre'" (click)="advanceStatus(d)" [disabled]="isBusy(d)">
+            {{ isBusy(d) ? '...' : getActionLabel(d) }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" *ngIf="toastOpen" (click)="toastOpen=false">
+    <div class="toast-card" [class.toast-error]="toastKind==='error'">{{ toastMessage }}</div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="page">
+  <div class="head">
+    <div>
+      <h1 class="title">Historique d’achats</h1>
+      <div class="subtitle">Tes achats par boutique, avec date/heure</div>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+  <div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+  <div class="list" *ngIf="!loading && !error">
+    <div class="empty" *ngIf="purchases.length === 0">Aucun achat pour le moment.</div>
+
+    <div class="purchase" *ngFor="let p of purchases; trackBy: trackById">
+      <div class="row">
+        <div class="left">
+          <div class="boutique">{{ getBoutiqueName(p) || 'Boutique' }}</div>
+          <div class="meta">
+            <span>{{ p.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span class="dot">•</span>
+            <span>{{ getItemsCount(p) }} article(s)</span>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="total">{{ p.total | number:'1.0-2' }} Ar</div>
+          <button class="expand" type="button" (click)="toggleExpanded(p, $event)" [attr.aria-expanded]="isExpanded(p)" aria-label="Afficher les articles">
+            <span class="chev" [class.open]="isExpanded(p)">{{ isExpanded(p) ? '🔼' : '🔽' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="details" *ngIf="isExpanded(p)">
+        <div class="details-head">
+          <div>Article</div>
+          <div style="text-align:right;">Qté</div>
+          <div style="text-align:right;">Prix</div>
+          <div style="text-align:right;">Sous-total</div>
+        </div>
+
+        <div class="details-row" *ngFor="let it of p.items">
+          <div class="item-name">{{ it.name }}</div>
+          <div class="item-qty" style="text-align:right;">{{ it.quantity }}</div>
+          <div class="item-price" style="text-align:right;">{{ it.price | number:'1.0-2' }} Ar</div>
+          <div class="item-sub" style="text-align:right;">{{ getItemSubtotal(it.price, it.quantity) | number:'1.0-2' }} Ar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

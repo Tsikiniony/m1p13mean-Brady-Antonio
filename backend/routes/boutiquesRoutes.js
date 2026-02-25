@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const boutiquesController = require("../controllers/boutiquesController");
 const articleController = require("../controllers/articleController");
+const salesController = require("../controllers/salesController");
+const stockController = require("../controllers/stockController");
 const { upload } = require("../middleware/uploadMiddleware");
 const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
@@ -12,6 +14,12 @@ router.get(
   authorizeRoles("boutique"),
   boutiquesController.listMineWithBoxFlag
 );
+router.get(
+  "/sales/mine",
+  protect,
+  authorizeRoles("boutique"),
+  salesController.listSalesMine
+);
 router.get("/", protect, authorizeRoles("boutique"), boutiquesController.listMine);
 router.post("/", protect, authorizeRoles("boutique"), boutiquesController.create);
 router.get("/:id", protect, authorizeRoles("boutique"), boutiquesController.getMineById);
@@ -21,6 +29,12 @@ router.get(
   protect,
   authorizeRoles("boutique"),
   articleController.listMineForBoutique
+);
+router.get(
+  "/:id/sales",
+  protect,
+  authorizeRoles("boutique"),
+  salesController.listSalesMineForBoutique
 );
 router.post(
   "/:id/articles",
@@ -41,6 +55,18 @@ router.put(
   authorizeRoles("boutique"),
   upload.single("image"),
   articleController.updateMineArticleForBoutique
+);
+router.get(
+  "/:id/articles/:articleId/stock",
+  protect,
+  authorizeRoles("boutique"),
+  stockController.getMineStockForArticle
+);
+router.put(
+  "/:id/articles/:articleId/stock",
+  protect,
+  authorizeRoles("boutique"),
+  stockController.setMineStockForArticle
 );
 router.delete(
   "/:id/articles/:articleId",

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Box } from '../../services/box.service';
 import { Boutique, BoutiquesService } from '../../services/boutiques.service';
 import { Article, ArticlesService } from '../../services/articles.service';
+import { StockService } from '../../services/stock.service';
 
 @Component({
   selector: 'app-boutique-boutique-details',
@@ -28,6 +29,7 @@ export class BoutiqueBoutiqueDetailsComponent implements OnInit {
   newDescription = '';
   newImageFile: File | null = null;
   newImagePreview: string | null = null;
+  newStock: number | null = null;
 
   selectedArticle: Article | null = null;
 
@@ -46,6 +48,7 @@ export class BoutiqueBoutiqueDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private boutiquesService: BoutiquesService,
     private articlesService: ArticlesService,
+    private stockService: StockService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -72,6 +75,7 @@ export class BoutiqueBoutiqueDetailsComponent implements OnInit {
     this.newDescription = '';
     this.newImageFile = null;
     this.newImagePreview = null;
+    this.newStock = null;
   }
 
   openDetails(a: Article): void {
@@ -100,6 +104,33 @@ export class BoutiqueBoutiqueDetailsComponent implements OnInit {
     this.editDescription = '';
     this.editImageFile = null;
     this.editImagePreview = null;
+  }
+
+  adjustStock(a: Article): void {
+    const boutiqueId = this.route.snapshot.paramMap.get('id');
+    if (!boutiqueId) {
+      this.error = 'ID boutique manquant';
+      return;
+    }
+
+    const current = typeof a.stock === 'number' ? a.stock : 0;
+    const nextStr = prompt(`Stock pour "${a.name}":`, String(current));
+    if (nextStr === null) return;
+
+    const next = Number(nextStr);
+    if (!Number.isFinite(next) || next < 0) {
+      this.error = 'Stock invalide';
+      return;
+    }
+
+    this.stockService.setMineStockForArticle(boutiqueId, a._id, Math.floor(next)).subscribe({
+      next: () => this.load(boutiqueId),
+      error: (err: any) => {
+        this.error = err?.error?.message || err?.error?.error || 'Erreur mise à jour stock';
+        console.error(err);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onPickEditImage(event: Event): void {
@@ -272,7 +303,8 @@ export class BoutiqueBoutiqueDetailsComponent implements OnInit {
         name: this.newName.trim(),
         price,
         description: this.newDescription,
-        image: this.newImageFile
+        image: this.newImageFile,
+        stock: this.newStock
       })
       .subscribe({
         next: () => {
