@@ -15,38 +15,40 @@
   </section>
 
   <section class="card" *ngIf="!loading">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Box</th>
-          <th>Boutique</th>
-          <th>Statut</th>
-          <th>Demande</th>
-          <th>Décision</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let h of filteredHistory">
-          <td>{{ h.boxName || '-' }} ({{ h.boxNumber || '-' }})</td>
-          <td>
-            <span *ngIf="h.boutique && typeof h.boutique === 'object'">
-              {{ h.boutique.name }}
-            </span>
-            <span *ngIf="!h.boutique || typeof h.boutique === 'string'">
-              {{ h.boutique || '-' }}
-            </span>
-          </td>
-          <td>
-            <span [class]="statusClass(h.status)">{{ statusLabel(h.status) }}</span>
-          </td>
-          <td>{{ formatDate(h.createdAt) }}</td>
-          <td>{{ formatDate(h.decidedAt) }}</td>
-        </tr>
-        <tr *ngIf="filteredHistory.length === 0">
-          <td colspan="5" style="text-align:center;padding:12px;">Aucune demande</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Box</th>
+            <th>Boutique</th>
+            <th>Statut</th>
+            <th>Demande</th>
+            <th>Décision</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let h of filteredHistory">
+            <td>{{ h.boxName || '-' }} ({{ h.boxNumber || '-' }})</td>
+            <td>
+              <span *ngIf="h.boutique && typeof h.boutique === 'object'">
+                {{ h.boutique.name }}
+              </span>
+              <span *ngIf="!h.boutique || typeof h.boutique === 'string'">
+                {{ h.boutique || '-' }}
+              </span>
+            </td>
+            <td>
+              <span [class]="statusClass(h.status)">{{ statusLabel(h.status) }}</span>
+            </td>
+            <td>{{ formatDate(h.createdAt) }}</td>
+            <td>{{ formatDate(h.decidedAt) }}</td>
+          </tr>
+          <tr *ngIf="filteredHistory.length === 0">
+            <td colspan="5" style="text-align:center;padding:12px;">Aucune demande</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <div class="loading" *ngIf="loading">Chargement...</div>

@@ -3,13 +3,16 @@
 
   <div class="login-types">
     <button type="button" class="type-btn" [class.active]="loginType === 'client'" (click)="setLoginType('client')">
-      Client
+      <span class="type-icon">👤</span>
+      <span class="type-label">Client</span>
     </button>
     <button type="button" class="type-btn" [class.active]="loginType === 'boutique'" (click)="setLoginType('boutique')">
-      Boutique
+      <span class="type-icon">🏪</span>
+      <span class="type-label">Boutique</span>
     </button>
     <button type="button" class="type-btn" [class.active]="loginType === 'admin'" (click)="setLoginType('admin')">
-      Admin
+      <span class="type-icon"></span>
+      <span class="type-label">Admin</span>
     </button>
   </div>
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const boutiquesController = require("../controllers/boutiquesController");
 const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
 
@@ -15,6 +16,9 @@ router.get("/", userController.getAllUsers);
 router.get("/boutiques/pending", userController.getPendingBoutiques);
 router.get("/boutiques/approved", userController.getApprovedBoutiques);
 router.put("/boutiques/:id/approve", userController.approveBoutique);
+
+// STATS (admin)
+router.get("/stats/top-boutiques-revenue", boutiquesController.getTopBoutiquesByRevenue);
 
 // GET user by ID
 router.get("/:id", userController.getUserById);

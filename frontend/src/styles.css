@@ -6,11 +6,64 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f6f7fb;
   min-height: 100vh;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .table-scroll,
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-scroll table,
+  .table-container table {
+    min-width: 720px;
+  }
+
+  .table-scroll th,
+  .table-scroll td,
+  .table-container th,
+  .table-container td {
+    white-space: nowrap;
+  }
 }
 
 /* Animations globales */

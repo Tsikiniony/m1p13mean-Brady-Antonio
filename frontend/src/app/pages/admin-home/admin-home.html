@@ -87,4 +87,27 @@
       </div>
     </div>
   </div>
+
+  <!-- Top boutiques par chiffre d'affaires -->
+  <div class="bar-section" *ngIf="!loading && !error">
+    <h2>🏪 Top boutiques (chiffre d'affaires)</h2>
+
+    <div class="muted" *ngIf="topBoutiquesRevenue.length === 0">
+      Aucune vente
+    </div>
+
+    <div class="bar-list" *ngIf="topBoutiquesRevenue.length > 0">
+      <div class="bar-row" *ngFor="let b of topBoutiquesRevenue">
+        <div class="bar-name">
+          {{ b.name || 'Boutique' }}
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" [style.width.%]="barWidthPct(b.revenue)"></div>
+        </div>
+        <div class="bar-value">
+          {{ b.revenue | currency:'MGA':'symbol':'1.0-0' }}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

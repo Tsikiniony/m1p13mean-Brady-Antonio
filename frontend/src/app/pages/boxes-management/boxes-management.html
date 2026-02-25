@@ -63,6 +63,14 @@
             <div class="actions">
               <button
                 class="btn-edit icon-btn"
+                (click)="openRequestDetails(r)"
+                [attr.aria-label]="'Détails boutique'"
+                title="Détails boutique"
+              >
+                🔎
+              </button>
+              <button
+                class="btn-edit icon-btn"
                 (click)="approvePendingRequest(r)"
                 [disabled]="isHandlingRequest(r.requestId)"
                 [attr.aria-label]="'Valider demande'"
@@ -88,6 +96,40 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showRequestDetailsModal" (click)="closeRequestDetails()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 style="margin:0;">🏪 Détails boutique</h3>
+        <button type="button" class="close-btn" (click)="closeRequestDetails()" aria-label="Fermer">✖</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedPendingRequest">
+        <div class="form-group">
+          <label>Box</label>
+          <div>{{ selectedPendingRequest.boxName || ('B' + selectedPendingRequest.boxNumber) }}</div>
+        </div>
+
+        <div class="form-group">
+          <label>Boutique</label>
+          <div>{{ getSelectedRequestBoutiqueName() }}</div>
+        </div>
+
+        <div class="error-message" *ngIf="selectedPendingRequest.boutique && !isSelectedRequestBoutiquePopulated()">
+          Détails boutique indisponibles
+        </div>
+
+        <div class="form-group" *ngIf="getSelectedRequestBoutiqueCategory()">
+          <label>Catégorie</label>
+          <div>{{ getSelectedRequestBoutiqueCategory() }}</div>
+        </div>
+
+        <div class="form-group" *ngIf="getSelectedRequestOwnerEmail()">
+          <label>Email propriétaire</label>
+          <div>{{ getSelectedRequestOwnerEmail() }}</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="table-container" *ngIf="!loading">

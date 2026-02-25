@@ -13,58 +13,60 @@
   <div class="loading" *ngIf="loading">Chargement...</div>
 
   <div class="card" *ngIf="!loading">
-    <table class="table" *ngIf="filteredBoxes.length > 0">
-      <thead>
-        <tr>
-          <th>Photo</th>
-          <th>Box</th>
-          <th>Loyer</th>
-          <th>Expiration</th>
-          <th>Statut</th>
-          <th>Résiliation</th>
-          <th>Détails</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let box of filteredBoxes">
-          <td>
-            <img *ngIf="box.image" class="thumb" [src]="box.image" alt="" loading="lazy" />
-            <span *ngIf="!box.image" class="muted">-</span>
-          </td>
-          <td>{{ getBoxTitle(box) }}</td>
-          <td>{{ box.rent }}</td>
-          <td>{{ getExpiresLabel(box) }}</td>
-          <td>
-            <span class="badge" [class.badge-expired]="isExpired(box)" [class.badge-cancelled]="box.status === 'resilié'">
-              {{ getStatusLabel(box) }}
-            </span>
-          </td>
-          <td>
-            <div class="actions">
-              <button
-                type="button"
-                class="chip"
-                (click)="requestCancel(box, 'at_expiry')"
-                [disabled]="isRequestingCancel(box._id) || hasPendingCancelRequest(box) || box.status === 'resilié'"
-              >
-                {{ isRequestingCancel(box._id) ? 'Envoi...' : 'À échéance' }}
-              </button>
-              <button
-                type="button"
-                class="chip"
-                (click)="requestCancel(box, 'immediate')"
-                [disabled]="isRequestingCancel(box._id) || hasPendingCancelRequest(box) || box.status === 'resilié'"
-              >
-                {{ isRequestingCancel(box._id) ? 'Envoi...' : 'Immédiate' }}
-              </button>
-            </div>
-          </td>
-          <td>
-            <a class="link" *ngIf="box._id" [routerLink]="['/boutique/boxes', box._id]">Voir</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="table" *ngIf="filteredBoxes.length > 0">
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Box</th>
+            <th>Loyer</th>
+            <th>Expiration</th>
+            <th>Statut</th>
+            <th>Résiliation</th>
+            <th>Détails</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let box of filteredBoxes">
+            <td>
+              <img *ngIf="box.image" class="thumb" [src]="box.image" alt="" loading="lazy" />
+              <span *ngIf="!box.image" class="muted">-</span>
+            </td>
+            <td>{{ getBoxTitle(box) }}</td>
+            <td>{{ box.rent }}</td>
+            <td>{{ getExpiresLabel(box) }}</td>
+            <td>
+              <span class="badge" [class.badge-expired]="isExpired(box)" [class.badge-cancelled]="box.status === 'resilié'">
+                {{ getStatusLabel(box) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button
+                  type="button"
+                  class="chip"
+                  (click)="requestCancel(box, 'at_expiry')"
+                  [disabled]="isRequestingCancel(box._id) || hasPendingCancelRequest(box) || box.status === 'resilié'"
+                >
+                  {{ isRequestingCancel(box._id) ? 'Envoi...' : 'À échéance' }}
+                </button>
+                <button
+                  type="button"
+                  class="chip"
+                  (click)="requestCancel(box, 'immediate')"
+                  [disabled]="isRequestingCancel(box._id) || hasPendingCancelRequest(box) || box.status === 'resilié'"
+                >
+                  {{ isRequestingCancel(box._id) ? 'Envoi...' : 'Immédiate' }}
+                </button>
+              </div>
+            </td>
+            <td>
+              <a class="link" *ngIf="box._id" [routerLink]="['/boutique/boxes', box._id]">Voir</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <div class="empty" *ngIf="filteredBoxes.length === 0">
       Aucun loyer.

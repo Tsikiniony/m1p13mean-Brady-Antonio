@@ -1,13 +1,24 @@
 <div class="layout">
   <nav class="navbar">
     <div class="brand">🏪 Boutique</div>
-    <a routerLink="/boutique/boutiques" class="nav-link">Mes boutiques</a>
-    <a routerLink="/boutique/demande-box" class="nav-link">Demander une box</a>
-    <a routerLink="/boutique/sales" class="nav-link">Ventes</a>
-    <a routerLink="/boutique/deliveries" class="nav-link">Livraisons</a>
-    <a routerLink="/boutique/rents" class="nav-link">Mes loyers</a>
-    <a routerLink="/boutique/history" class="nav-link">Mon historique</a>
-    <button class="logout-btn" (click)="logout()">Déconnexion</button>
+
+    <button type="button" class="hamburger" (click)="toggleMenu()" aria-label="Menu">
+      ☰
+    </button>
+
+    <div class="navbar-menu" [class.open]="menuOpen">
+      <div class="links">
+        <a routerLink="/boutique/boutiques" routerLinkActive="active" class="nav-link">Mes boutiques</a>
+        <a routerLink="/boutique/demande-box" routerLinkActive="active" class="nav-link">Demander une box</a>
+        <a routerLink="/boutique/sales" routerLinkActive="active" class="nav-link">Ventes</a>
+        <a routerLink="/boutique/deliveries" routerLinkActive="active" class="nav-link">Livraisons</a>
+        <a routerLink="/boutique/rents" routerLinkActive="active" class="nav-link">Mes loyers</a>
+        <a routerLink="/boutique/history" routerLinkActive="active" class="nav-link">Mon historique</a>
+      </div>
+      <button type="button" class="logout-btn mobile-logout" (click)="logout()">Déconnexion</button>
+    </div>
+
+    <button type="button" class="logout-btn desktop-logout" (click)="logout()">Déconnexion</button>
   </nav>
 
   <div class="content">

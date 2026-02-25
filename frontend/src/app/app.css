@@ -108,6 +108,8 @@
 
 .public-container{max-width:1200px;margin:0 auto;padding:18px}
 
+.full-container{width:100%;min-height:100vh;padding:0}
+
 /* Effet de glassmorphism */
 .glass-effect {
   background: rgba(255, 255, 255, 0.1);

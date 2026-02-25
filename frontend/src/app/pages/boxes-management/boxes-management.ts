@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BoxService, Box, PendingBoxRequest } from '../../services/box.service';
@@ -29,6 +29,9 @@ export class BoxesManagementComponent implements OnInit {
   showModal = false;
   isEditMode = false;
   currentBox: Box = this.getEmptyBox();
+
+  showRequestDetailsModal = false;
+  selectedPendingRequest: PendingBoxRequest | null = null;
 
   loading = false;
   savingBox = false;
@@ -161,6 +164,51 @@ export class BoxesManagementComponent implements OnInit {
       return `${req.boutique.name}${ownerPart}${cat}`;
     }
     return String(req.boutique);
+  }
+
+  openRequestDetails(req: PendingBoxRequest) {
+    this.selectedPendingRequest = req;
+    this.showRequestDetailsModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeRequestDetails() {
+    this.showRequestDetailsModal = false;
+    this.selectedPendingRequest = null;
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: Event) {
+    if (!this.showRequestDetailsModal) return;
+    const e = event as KeyboardEvent;
+    e.preventDefault();
+    this.closeRequestDetails();
+  }
+
+  getSelectedRequestOwnerEmail(): string {
+    const b = this.selectedPendingRequest?.boutique;
+    if (!b || typeof b !== 'object') return '';
+    const owner = b.owner;
+    if (owner && typeof owner === 'object' && owner.email) return owner.email;
+    return '';
+  }
+
+  getSelectedRequestBoutiqueName(): string {
+    const b = this.selectedPendingRequest?.boutique;
+    if (!b) return '-';
+    if (typeof b === 'object') return b.name || '-';
+    return '-';
+  }
+
+  getSelectedRequestBoutiqueCategory(): string {
+    const b = this.selectedPendingRequest?.boutique;
+    if (!b || typeof b !== 'object') return '';
+    return b.category || '';
+  }
+
+  isSelectedRequestBoutiquePopulated(): boolean {
+    const b = this.selectedPendingRequest?.boutique;
+    return !!b && typeof b === 'object' && !!b.name;
   }
 
   openAddModal() {

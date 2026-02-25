@@ -26,6 +26,6 @@
   </div>
 </nav>
 
-<div class="public-container">
+<div [class.public-container]="showPublicNavbar()" [class.full-container]="!showPublicNavbar()">
   <router-outlet />
 </div>
