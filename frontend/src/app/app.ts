@@ -17,6 +17,7 @@ export class App {
   showPublicNavbar = signal(true);
   currentUser = signal<any>(null);
   userMenuOpen = signal(false);
+  mobileMenuOpen = signal(false);
 
   constructor(private router: Router, private auth: AuthService) {
     this.updateNavbarVisibility(router.url);
@@ -26,6 +27,7 @@ export class App {
         this.updateNavbarVisibility(e.urlAfterRedirects);
         this.currentUser.set(this.auth.getUser());
         this.userMenuOpen.set(false);
+        this.mobileMenuOpen.set(false);
       }
     });
   }
@@ -54,5 +56,9 @@ export class App {
     this.auth.logout();
     this.currentUser.set(null);
     this.userMenuOpen.set(false);
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.set(!this.mobileMenuOpen());
   }
 }
