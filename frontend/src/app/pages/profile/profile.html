@@ -1,0 +1,51 @@
+<div class="page">
+  <h1>👤 Profil</h1>
+
+  <section class="card">
+    <h2>📝 Modifier profil</h2>
+
+    <div class="error" *ngIf="errorProfile">{{ errorProfile }}</div>
+
+    <div class="grid">
+      <label>
+        Nom
+        <input type="text" [(ngModel)]="name" />
+      </label>
+
+      <label>
+        Email
+        <input type="email" [(ngModel)]="email" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="button" (click)="saveProfile()" [disabled]="savingProfile">
+        {{ savingProfile ? '💾 Enregistrement...' : '💾 Enregistrer' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🔒 Modifier mot de passe</h2>
+
+    <div class="error" *ngIf="errorPassword">{{ errorPassword }}</div>
+
+    <div class="grid">
+      <label>
+        Nouveau mot de passe
+        <input type="password" [(ngModel)]="password" />
+      </label>
+
+      <label>
+        Confirmer mot de passe
+        <input type="password" [(ngModel)]="confirmPassword" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="button" (click)="savePassword()" [disabled]="savingPassword">
+        {{ savingPassword ? '💾 Enregistrement...' : '💾 Enregistrer' }}
+      </button>
+    </div>
+  </section>
+</div>

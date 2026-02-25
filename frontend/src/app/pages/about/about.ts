@@ -1,25 +1,18 @@
-import { AfterViewInit, Component, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CartService } from '../../services/cart.service';
 
 @Component({
-  selector: 'app-client-home',
+  selector: 'app-about',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './client-home.html',
-  styleUrl: './client-home.css'
+  templateUrl: './about.html',
+  styleUrl: './about.css'
 })
-export class ClientHomeComponent implements AfterViewInit, OnDestroy {
-  constructor(private cart: CartService) {}
-
-  private platformId = inject(PLATFORM_ID);
-
+export class AboutComponent implements AfterViewInit, OnDestroy {
   private observer?: IntersectionObserver;
 
   ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-
     const elements = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
 
     if (!('IntersectionObserver' in window)) {
@@ -49,8 +42,5 @@ export class ClientHomeComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.observer?.disconnect();
   }
-
-  getCartCount(): number {
-    return this.cart.getCount();
-  }
 }
+

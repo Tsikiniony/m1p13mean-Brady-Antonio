@@ -58,6 +58,10 @@ export class UserService {
     return this.http.put<User>(`${this.API_URL}/${id}`, user, { headers: this.getHeaders() });
   }
 
+  updateMe(user: Partial<Pick<User, 'name' | 'email' | 'password'>>): Observable<User> {
+    return this.http.put<User>(`${this.API_URL}/me`, user, { headers: this.getHeaders() });
+  }
+
   deleteUser(id: string): Observable<any> {
     return this.http.delete(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
   }

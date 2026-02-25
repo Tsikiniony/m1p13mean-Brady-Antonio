@@ -16,6 +16,9 @@ export class BoutiqueBoutiquesListComponent implements OnInit {
   loading = false;
   error = '';
 
+  rowErrorId: string | null = null;
+  rowErrorMsg = '';
+
   filter: 'all' | 'withBox' | 'withoutBox' = 'all';
 
   newName = '';
@@ -36,6 +39,8 @@ export class BoutiqueBoutiquesListComponent implements OnInit {
   load(): void {
     this.loading = true;
     this.error = '';
+    this.rowErrorId = null;
+    this.rowErrorMsg = '';
 
     this.boutiquesService.listMineWithBoxFlag().subscribe({
       next: (data) => {
@@ -59,6 +64,8 @@ export class BoutiqueBoutiquesListComponent implements OnInit {
   }
 
   create(): void {
+    this.rowErrorId = null;
+    this.rowErrorMsg = '';
     if (!this.newName.trim()) {
       this.error = 'Le nom est requis';
       return;
@@ -77,6 +84,63 @@ export class BoutiqueBoutiquesListComponent implements OnInit {
       error: (err) => {
         this.error = err?.error?.message || err?.error?.error || 'Erreur lors de la création';
         this.creating = false;
+        console.error(err);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  editBoutique(b: BoutiqueWithBoxFlag): void {
+    this.rowErrorId = null;
+    this.rowErrorMsg = '';
+    const nextName = prompt('Nouveau nom de la boutique :', b.name);
+    if (nextName === null) return;
+
+    const trimmedName = nextName.trim();
+    if (!trimmedName) {
+      this.error = 'Le nom est requis';
+      return;
+    }
+
+    const currentCategory = (b.category ?? '') as string;
+    const catHint = this.categories.length ? `\nCatégories: ${this.categories.join(', ')}` : '';
+    const nextCategoryRaw = prompt(`Nouvelle catégorie (optionnel). Laisser vide pour supprimer.${catHint}`, String(currentCategory));
+    if (nextCategoryRaw === null) return;
+
+    const nextCategory = nextCategoryRaw.trim();
+
+    this.error = '';
+    this.boutiquesService
+      .updateMineById(b._id, { name: trimmedName, category: nextCategory ? nextCategory : null })
+      .subscribe({
+        next: () => this.load(),
+        error: (err) => {
+          this.rowErrorId = b._id;
+          this.rowErrorMsg = err?.error?.message || err?.error?.error || 'Erreur lors de la modification';
+          console.error(err);
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  deleteBoutique(b: BoutiqueWithBoxFlag): void {
+    if (b.hasBox) {
+      this.rowErrorId = b._id;
+      this.rowErrorMsg = "vous ne pouvez pas supprimer qu'a la fin de l'abonnement";
+      return;
+    }
+
+    if (!confirm(`Supprimer la boutique "${b.name}" ?`)) {
+      return;
+    }
+
+    this.rowErrorId = null;
+    this.rowErrorMsg = '';
+    this.boutiquesService.deleteMineById(b._id).subscribe({
+      next: () => this.load(),
+      error: (err) => {
+        this.rowErrorId = b._id;
+        this.rowErrorMsg = err?.error?.message || err?.error?.error || 'Erreur lors de la suppression';
         console.error(err);
         this.cdr.detectChanges();
       }

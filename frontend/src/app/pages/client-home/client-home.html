@@ -6,4 +6,64 @@
       <a class="btn" routerLink="/client/products">Voir tous les produits</a>
     </div>
   </header>
+
+  <main class="home-content">
+    <section class="promo" aria-label="Publicité">
+      <div class="promo-card reveal">
+        <div class="promo-text">
+          <div class="promo-kicker">NOUVEAUTÉ</div>
+          <h2 class="promo-title">Faites vos achats plus vite, plus simple.</h2>
+          <p class="promo-subtitle">
+            Découvrez nos boutiques partenaires, suivez vos commandes et profitez d’une expérience fluide sur mobile.
+          </p>
+
+          <div class="promo-actions">
+            <a class="btn" routerLink="/client/products">Découvrir</a>
+            <a class="btn secondary" routerLink="/register">Créer un compte</a>
+          </div>
+        </div>
+
+        <div class="promo-media" aria-hidden="true">
+          <img src="/assets/personne.jpg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <section class="boxes" aria-label="Boxes disponibles">
+      <div class="section-head reveal">
+        <h2>Boxes disponibles sur la plateforme</h2>
+        <p>
+          Pour louer une box, vous devez vous inscrire en tant que <strong>boutique</strong>.
+        </p>
+      </div>
+
+      <div class="box-grid">
+        <article class="box-card reveal">
+          <div class="box-image">
+            <img src="/assets/box1.jpg" alt="Box disponible" />
+          </div>
+          <div class="box-body">
+            <div class="box-title">Box Standard</div>
+            <div class="box-desc">Idéale pour exposer vos produits et démarrer rapidement.</div>
+            <div class="box-actions">
+              <a class="btn secondary" routerLink="/register">Inscription Boutique</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="box-card reveal">
+          <div class="box-image">
+            <img src="/assets/box2.jpg" alt="Box disponible" />
+          </div>
+          <div class="box-body">
+            <div class="box-title">Box Premium</div>
+            <div class="box-desc">Plus d’espace et plus de visibilité pour votre boutique.</div>
+            <div class="box-actions">
+              <a class="btn secondary" routerLink="/register">Inscription Boutique</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
 </div>

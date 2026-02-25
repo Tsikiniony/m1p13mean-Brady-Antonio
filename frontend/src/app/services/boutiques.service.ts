@@ -81,4 +81,8 @@ export class BoutiquesService {
   updateMineById(id: string, payload: Partial<Pick<Boutique, 'name' | 'category'>>): Observable<Boutique> {
     return this.http.put<Boutique>(`${this.API_URL}/${id}`, payload, { headers: this.getHeaders() });
   }
+
+  deleteMineById(id: string): Observable<{ message?: string } | any> {
+    return this.http.delete(`${this.API_URL}/${id}`, { headers: this.getHeaders() });
+  }
 }

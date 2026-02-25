@@ -6,8 +6,10 @@
 }
 
 .public-navbar{
-  position:sticky;
+  position:fixed;
   top:0;
+  left:0;
+  right:0;
   z-index:1000;
   display:flex;
   align-items:center;
@@ -16,6 +18,10 @@
   padding:14px 18px;
   background:#ffffff;
   border-bottom:1px solid #e5e7eb;
+}
+
+.public-container{
+  padding-top: var(--navbar-height, 64px);
 }
 
 .public-brand{
@@ -29,6 +35,10 @@
   display:flex;
   gap:10px;
   align-items:center;
+}
+
+.mobile-auth{
+  display:none;
 }
 
 @media (max-width: 768px) {
@@ -58,6 +68,18 @@
     text-align: center;
     padding: 12px;
     border-radius: 8px;
+  }
+
+  .mobile-auth{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+    margin-top:12px;
+  }
+
+  .mobile-auth .public-btn{
+    width:100%;
   }
 }
 

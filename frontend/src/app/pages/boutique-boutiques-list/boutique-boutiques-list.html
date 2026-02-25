@@ -38,10 +38,10 @@
       <table class="table" *ngIf="!loading">
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Catégorie</th>
-            <th>Box</th>
-            <th>Actions</th>
+            <td>Nom</td>
+            <td>Catégorie</td>
+            <td>Box</td>
+            <td>Actions</td>
           </tr>
         </thead>
         <tbody>
@@ -54,7 +54,21 @@
               </span>
             </td>
             <td>
-              <a class="link" [routerLink]="['/boutique/boutiques', b._id]">Détails</a>
+              <div class="actions">
+                <a class="icon-link" [routerLink]="['/boutique/boutiques', b._id]" title="Détails" aria-label="Détails">
+                  👁️
+                </a>
+
+                <button class="icon-btn" type="button" (click)="editBoutique(b)" title="Modifier" aria-label="Modifier">
+                  ✏️
+                </button>
+
+                <button class="icon-btn danger" type="button" (click)="deleteBoutique(b)" title="Supprimer" aria-label="Supprimer">
+                  🗑️
+                </button>
+              </div>
+
+              <div class="row-error" *ngIf="rowErrorId === b._id">{{ rowErrorMsg }}</div>
             </td>
           </tr>
           <tr *ngIf="filteredBoutiques.length === 0">
