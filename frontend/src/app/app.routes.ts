@@ -24,11 +24,17 @@ import { ClientDeliveryComponent } from './pages/client-delivery/client-delivery
 import { BoutiqueSalesComponent } from './pages/boutique-sales/boutique-sales';
 import { BoutiqueDeliveriesComponent } from './pages/boutique-deliveries/boutique-deliveries';
 import { BoutiqueDeliveryDetailsComponent } from './pages/boutique-delivery-details/boutique-delivery-details';
+import { AboutComponent } from './pages/about/about';
+import { ContactComponent } from './pages/contact/contact';
+import { ProfileComponent } from './pages/profile/profile';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
+  { path: 'about', component: AboutComponent },
+  { path: 'contact', component: ContactComponent },
+  { path: 'client/profile', component: ProfileComponent },
   { path: 'client', component: ClientHomeComponent },
   { path: 'client/products', component: ClientProductsComponent },
   { path: 'client/products/:id', component: ClientProductDetailsComponent },
@@ -39,6 +45,7 @@ export const routes: Routes = [
     path: 'boutique',
     component: BoutiqueLayoutComponent,
     children: [
+      { path: 'profile', component: ProfileComponent },
       { path: 'boutiques', component: BoutiqueBoutiquesListComponent },
       { path: 'boutiques/:id', component: BoutiqueBoutiqueDetailsComponent },
       { path: 'sales', component: BoutiqueSalesComponent },

@@ -5,8 +5,13 @@ const boutiquesController = require("../controllers/boutiquesController");
 const { protect } = require("../middleware/authMiddleware");
 const { authorizeRoles } = require("../middleware/roleMiddleware");
 
-// Toutes les routes nécessitent authentification et rôle admin
+// Auth obligatoire pour toutes les routes users
 router.use(protect);
+
+// Profil (client/boutique/admin): modifier son propre compte
+router.put("/me", userController.updateMe);
+
+// Le reste est réservé à l'admin
 router.use(authorizeRoles("admin"));
 
 // GET all users

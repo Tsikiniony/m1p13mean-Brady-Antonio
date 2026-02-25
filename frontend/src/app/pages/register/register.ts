@@ -23,6 +23,10 @@ export class Register {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
   onRegister() {
     this.error = '';
 
@@ -33,6 +37,11 @@ export class Register {
 
     if (!this.email.trim()) {
       this.error = 'Email requis';
+      return;
+    }
+
+    if (!this.isValidEmail(this.email.trim())) {
+      this.error = 'Email invalide';
       return;
     }
 
@@ -51,7 +60,7 @@ export class Register {
     this.auth
       .register({
         name: this.name,
-        email: this.email,
+        email: this.email.trim(),
         password: this.password,
         role: this.isBoutique ? 'boutique' : 'client'
       })

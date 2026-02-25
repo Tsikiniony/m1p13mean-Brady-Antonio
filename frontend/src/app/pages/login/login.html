@@ -2,18 +2,23 @@
   <h2>🔐 Login</h2>
 
   <div class="login-types">
-    <button type="button" class="type-btn" [class.active]="loginType === 'client'" (click)="setLoginType('client')">
-      <span class="type-icon">👤</span>
-      <span class="type-label">Client</span>
-    </button>
-    <button type="button" class="type-btn" [class.active]="loginType === 'boutique'" (click)="setLoginType('boutique')">
-      <span class="type-icon">🏪</span>
-      <span class="type-label">Boutique</span>
-    </button>
-    <button type="button" class="type-btn" [class.active]="loginType === 'admin'" (click)="setLoginType('admin')">
-      <span class="type-icon"></span>
-      <span class="type-label">Admin</span>
-    </button>
+    <div class="types-row top">
+      <button type="button" class="type-btn" [class.active]="loginType === 'admin'" (click)="setLoginType('admin')">
+        <span class="type-icon"></span>
+        <span class="type-label">Admin</span>
+      </button>
+    </div>
+
+    <div class="types-row bottom">
+      <button type="button" class="type-btn" [class.active]="loginType === 'boutique'" (click)="setLoginType('boutique')">
+        <span class="type-icon">🏪</span>
+        <span class="type-label">Boutique</span>
+      </button>
+      <button type="button" class="type-btn" [class.active]="loginType === 'client'" (click)="setLoginType('client')">
+        <span class="type-icon">👤</span>
+        <span class="type-label">Client</span>
+      </button>
+    </div>
   </div>
 
   <div class="form" [class.animating]="animating">

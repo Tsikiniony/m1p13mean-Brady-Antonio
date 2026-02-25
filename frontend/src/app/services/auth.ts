@@ -29,7 +29,11 @@ export class AuthService {
 
   saveUser(user: any) {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('user', JSON.stringify(user || null));
+      const normalized = user && typeof user === 'object' ? { ...user } : user;
+      if (normalized && typeof normalized === 'object' && (normalized as any).id && !(normalized as any)._id) {
+        (normalized as any)._id = (normalized as any).id;
+      }
+      localStorage.setItem('user', JSON.stringify(normalized || null));
     }
   }
 
@@ -38,7 +42,11 @@ export class AuthService {
       const raw = localStorage.getItem('user');
       if (!raw) return null;
       try {
-        return JSON.parse(raw);
+        const u = JSON.parse(raw);
+        if (u && typeof u === 'object' && u.id && !u._id) {
+          u._id = u.id;
+        }
+        return u;
       } catch {
         return null;
       }

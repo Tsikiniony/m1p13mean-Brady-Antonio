@@ -6,6 +6,11 @@
     <a class="public-link" routerLink="/client/products" routerLinkActive="active">Produits</a>
     <a class="public-link" routerLink="/about" routerLinkActive="active">À propos</a>
     <a class="public-link" routerLink="/contact" routerLinkActive="active">Contact</a>
+
+    <div class="mobile-auth" *ngIf="!isClientLoggedIn()">
+      <a class="public-btn secondary" routerLink="/register" (click)="toggleMobileMenu()">S'inscrire</a>
+      <a class="public-btn" routerLink="/login" (click)="toggleMobileMenu()">Connexion</a>
+    </div>
   </div>
 
   <div class="public-actions">
@@ -29,6 +34,7 @@
           {{ getClientName() }}
         </button>
         <div class="user-dropdown" *ngIf="userMenuOpen()">
+          <a class="user-item" routerLink="/client/profile" (click)="toggleUserMenu()">👤 Profil</a>
           <button type="button" class="user-item" (click)="logout()">Déconnexion</button>
         </div>
       </div>
@@ -39,3 +45,9 @@
 <div [class.public-container]="showPublicNavbar()" [class.full-container]="!showPublicNavbar()">
   <router-outlet />
 </div>
+
+<footer class="global-footer">
+  <div class="global-footer__inner">
+    ANDRIAMALALA TSIKINIONY BRADY ET RAVELONARIVO TSIORIMBOLA ANTONIO
+  </div>
+</footer>

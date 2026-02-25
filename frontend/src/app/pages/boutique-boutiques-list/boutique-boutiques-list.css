@@ -13,3 +13,14 @@ input,select{padding:10px;border:1px solid #ddd;border-radius:10px}
 .ko{color:#a11a1a;font-weight:700}
 .link{text-decoration:none;color:#667eea;font-weight:700}
 .link:hover{text-decoration:underline}
+
+.actions{display:flex;gap:8px;align-items:center;justify-content:flex-start}
+.icon-link,.icon-btn{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center}
+.icon-link{border:1px solid #e9e9ef;background:#fff;color:#222 !important;text-decoration:none}
+.icon-btn{border:1px solid #e9e9ef;background:#fff;color:#222 !important;cursor:pointer}
+.icon-link,.icon-btn{font-size:18px;line-height:1}
+.icon-btn:hover,.icon-link:hover{background:#f5f6ff;border-color:#d6d7ff}
+.icon-btn.danger{border-color:#ffd6d6;background:#fff}
+.icon-btn.danger:hover{background:#ffecec;border-color:#ffbdbd}
+
+.row-error{margin-top:6px;color:#b00020;font-weight:700;font-size:12px;line-height:1.2}

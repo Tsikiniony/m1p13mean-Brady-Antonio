@@ -56,6 +56,34 @@ exports.createUser = async (req, res) => {
   }
 };
 
+// UPDATE ME (client/boutique/admin)
+exports.updateMe = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const updateData = {};
+    if (typeof name === 'string' && name.trim()) updateData.name = name.trim();
+    if (typeof email === 'string' && email.trim()) updateData.email = email.trim();
+
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, updateData, {
+      returnDocument: 'after',
+      runValidators: true
+    }).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // UPDATE USER
 exports.updateUser = async (req, res) => {
   try {
