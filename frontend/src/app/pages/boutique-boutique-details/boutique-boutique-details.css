@@ -13,8 +13,8 @@
 .section-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 
 .table{display:flex;flex-direction:column;border:1px solid #eee;border-radius:12px;overflow:hidden}
-.table-head{display:grid;grid-template-columns:1fr 140px 260px;gap:12px;align-items:center;padding:10px 12px;background:#f9fafb;color:#6b7280;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-.row-item{display:grid;grid-template-columns:1fr 140px 260px;gap:12px;align-items:center;padding:12px 12px;border-top:1px solid #eee;background:#fff}
+.table-head{display:grid;grid-template-columns:1fr 120px 140px 260px;gap:12px;align-items:center;padding:10px 12px;background:#f9fafb;color:#6b7280;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.row-item{display:grid;grid-template-columns:1fr 120px 140px 260px;gap:12px;align-items:center;padding:12px 12px;border-top:1px solid #eee;background:#fff}
 .row-item:first-child{border-top:none}
 .cell-main{display:flex;align-items:center;gap:12px;min-width:0}
 .cell-price{text-align:right;font-weight:900}

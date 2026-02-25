@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
@@ -20,7 +20,7 @@ export class Login implements OnInit {
   email: string = '';
   password: string = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
 
   presets: Record<'client' | 'boutique' | 'admin', { email: string; password: string; label: string }> = {
     client: { email: 'client@gmail.com', password: '123456', label: 'Client' },
@@ -61,6 +61,12 @@ export class Login implements OnInit {
         // Sauvegarder le token
         this.auth.saveToken(res.token);
         this.auth.saveUser(res.user);
+
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        if (returnUrl && res.user.role === 'client') {
+          this.router.navigateByUrl(returnUrl);
+          return;
+        }
 
         // Redirection selon rôle
         switch(res.user.role){

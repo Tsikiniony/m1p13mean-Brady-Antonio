@@ -1,0 +1,45 @@
+<div class="page">
+  <a class="back" routerLink="/boutique/deliveries">← Retour</a>
+
+  <div class="loading" *ngIf="loading">Chargement...</div>
+  <div class="error" *ngIf="!loading && error">{{ error }}</div>
+
+  <div class="wrap" *ngIf="!loading && !error && delivery">
+    <div class="head">
+      <div>
+        <h1 class="title">Détail livraison</h1>
+        <div class="muted">
+          Boutique: <strong>{{ getBoutiqueName() }}</strong>
+          <span *ngIf="getPurchaseDate()">• {{ getPurchaseDate() | date:'short' }}</span>
+        </div>
+      </div>
+      <div class="mobile">📞 {{ delivery.mobile }}</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Client</div>
+        <div><strong>{{ getClientName() }}</strong></div>
+        <div class="muted">{{ getClientEmail() }}</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Commande</div>
+        <div class="muted">Total: <strong>{{ getTotal() }} Ar</strong></div>
+        <div class="items" *ngIf="getItems().length>0">
+          <div class="item" *ngFor="let it of getItems()">
+            <div class="it-name">{{ it.name }}</div>
+            <div class="it-meta">{{ it.quantity }} x {{ it.price }} Ar</div>
+          </div>
+        </div>
+        <div class="muted" *ngIf="getItems().length===0">(Aucun item)</div>
+      </div>
+
+      <div class="card map-card">
+        <div class="card-title">Lieu de livraison</div>
+        <div id="boutiqueDeliveryMap" class="map"></div>
+        <div class="muted" style="margin-top:8px;">Lat: {{ delivery.location.lat | number:'1.5-5' }}, Lng: {{ delivery.location.lng | number:'1.5-5' }}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -18,6 +18,12 @@ import { AdminHomeComponent } from './pages/admin-home/admin-home';
 import { ClientHomeComponent } from './pages/client-home/client-home';
 import { ClientProductsComponent } from './pages/client-products/client-products';
 import { ClientProductDetailsComponent } from './pages/client-product-details/client-product-details';
+import { ClientCartComponent } from './pages/client-cart/client-cart';
+import { ClientPurchasesComponent } from './pages/client-purchases/client-purchases';
+import { ClientDeliveryComponent } from './pages/client-delivery/client-delivery';
+import { BoutiqueSalesComponent } from './pages/boutique-sales/boutique-sales';
+import { BoutiqueDeliveriesComponent } from './pages/boutique-deliveries/boutique-deliveries';
+import { BoutiqueDeliveryDetailsComponent } from './pages/boutique-delivery-details/boutique-delivery-details';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -26,12 +32,18 @@ export const routes: Routes = [
   { path: 'client', component: ClientHomeComponent },
   { path: 'client/products', component: ClientProductsComponent },
   { path: 'client/products/:id', component: ClientProductDetailsComponent },
+  { path: 'client/cart', component: ClientCartComponent },
+  { path: 'client/delivery', component: ClientDeliveryComponent },
+  { path: 'client/purchases', component: ClientPurchasesComponent },
   {
     path: 'boutique',
     component: BoutiqueLayoutComponent,
     children: [
       { path: 'boutiques', component: BoutiqueBoutiquesListComponent },
       { path: 'boutiques/:id', component: BoutiqueBoutiqueDetailsComponent },
+      { path: 'sales', component: BoutiqueSalesComponent },
+      { path: 'deliveries', component: BoutiqueDeliveriesComponent },
+      { path: 'deliveries/:id', component: BoutiqueDeliveryDetailsComponent },
       { path: 'boxes/:id', component: BoutiqueBoxDetailsComponent },
       { path: 'demande-box', component: BoutiqueRequestBoxComponent },
       { path: 'rents', component: BoutiqueRentsComponent },

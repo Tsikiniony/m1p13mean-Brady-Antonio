@@ -1,0 +1,54 @@
+<div class="page">
+  <div class="head">
+    <div>
+      <h1 class="title">Panier</h1>
+      <div class="subtitle">{{ items.length }} produit(s) dans ton panier</div>
+    </div>
+    <div class="head-actions">
+      <button class="btn" type="button" (click)="checkout()" [disabled]="items.length === 0 || checkingOut">
+        {{ checkingOut ? 'Validation...' : 'Valider le panier' }}
+      </button>
+      <button class="btn-danger" type="button" (click)="clear()" [disabled]="items.length === 0 || checkingOut">Vider</button>
+    </div>
+  </div>
+
+  <div class="success" *ngIf="success">{{ success }}</div>
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <div class="empty" *ngIf="items.length === 0">
+    Ton panier est vide.
+    <a class="link" routerLink="/client/products">Voir les produits</a>
+  </div>
+
+  <div class="list" *ngIf="items.length > 0">
+    <div class="item" *ngFor="let i of items; trackBy: trackById">
+      <div class="thumb">
+        <img [src]="i.image || 'https://via.placeholder.com/320x240?text=Produit'" alt="" />
+      </div>
+
+      <div class="info">
+        <div class="name">{{ i.name }}</div>
+        <div class="price">{{ i.price | number:'1.0-2' }} Ar</div>
+      </div>
+
+      <div class="qty">
+        <button class="icon" type="button" (click)="dec(i)">−</button>
+        <div class="q">{{ i.quantity }}</div>
+        <button class="icon" type="button" (click)="inc(i)">+</button>
+      </div>
+
+      <div class="sub">
+        {{ (i.price * i.quantity) | number:'1.0-2' }} Ar
+      </div>
+
+      <div class="rm">
+        <button class="link-danger" type="button" (click)="remove(i)">Supprimer</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="total-label">Total</div>
+      <div class="total">{{ getTotal() | number:'1.0-2' }} Ar</div>
+    </div>
+  </div>
+</div>

@@ -41,6 +41,7 @@
     <div class="table" *ngIf="articles.length > 0">
       <div class="table-head">
         <div>Nom</div>
+        <div style="text-align:right;">Stock</div>
         <div style="text-align:right;">Prix</div>
         <div style="text-align:right;">Actions</div>
       </div>
@@ -57,9 +58,13 @@
           </div>
         </div>
 
+        <div class="cell-price">{{ (a.stock ?? 0) }}</div>
         <div class="cell-price">{{ a.price }} Ar</div>
 
         <div class="cell-actions">
+          <button class="icon-btn" type="button" (click)="adjustStock(a)" title="Stock" aria-label="Stock">
+            <span aria-hidden="true">📦</span>
+          </button>
           <button class="icon-btn" type="button" (click)="openDetails(a)" title="Détails" aria-label="Détails">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 5c7 0 10 7 10 7s-3 7-10 7S2 12 2 12s3-7 10-7Zm0 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0-2a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
@@ -172,6 +177,10 @@
             <label>
               Prix
               <input type="number" [(ngModel)]="newPrice" placeholder="0" />
+            </label>
+            <label>
+              Stock
+              <input type="number" [(ngModel)]="newStock" placeholder="0" />
             </label>
             <label style="grid-column:1/-1;">
               Description

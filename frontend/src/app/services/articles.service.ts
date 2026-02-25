@@ -11,6 +11,7 @@ export interface Article {
   price: number;
   image?: string | null;
   isActive?: boolean;
+  stock?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -20,6 +21,7 @@ export type CreateArticlePayload = {
   price: number;
   description?: string;
   image?: File | null;
+  stock?: number | null;
 };
 
 export type UpdateArticlePayload = Partial<{
@@ -77,6 +79,9 @@ export class ArticlesService {
     form.append('name', payload.name);
     form.append('price', String(payload.price));
     form.append('description', payload.description || '');
+    if (typeof payload.stock !== 'undefined' && payload.stock !== null) {
+      form.append('stock', String(payload.stock));
+    }
     if (payload.image) {
       form.append('image', payload.image);
     }
