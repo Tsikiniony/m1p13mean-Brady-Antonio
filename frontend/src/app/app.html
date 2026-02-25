@@ -1,13 +1,23 @@
 <nav class="public-navbar" *ngIf="showPublicNavbar()">
   <a class="public-brand" routerLink="/">Centre Commercial</a>
 
-  <div class="public-links">
+  <div class="public-links" [class.mobile-open]="mobileMenuOpen()">
     <a class="public-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Accueil</a>
     <a class="public-link" routerLink="/client/products" routerLinkActive="active">Produits</a>
-    <a class="public-link" routerLink="/client/purchases" routerLinkActive="active">Historique</a>
+    <a class="public-link" routerLink="/about" routerLinkActive="active">À propos</a>
+    <a class="public-link" routerLink="/contact" routerLinkActive="active">Contact</a>
   </div>
 
   <div class="public-actions">
+    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" *ngIf="!mobileMenuOpen()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <button class="mobile-menu-toggle close" (click)="toggleMobileMenu()" *ngIf="mobileMenuOpen()">
+      <span></span>
+      <span></span>
+    </button>
     <ng-container *ngIf="!isClientLoggedIn(); else loggedClient">
       <a class="public-btn secondary" routerLink="/register">S'inscrire</a>
       <a class="public-btn" routerLink="/login">Connexion</a>
