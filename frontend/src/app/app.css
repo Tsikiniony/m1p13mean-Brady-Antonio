@@ -29,6 +29,16 @@
   color:#111827;
   text-decoration:none;
   letter-spacing:.2px;
+  display:inline-flex;
+  align-items:center;
+}
+
+.public-logo{
+  height:50px;
+  width:auto;
+  display:block;
+  transform:scale(2.5);
+  transform-origin:left center;
 }
 
 .public-links{
@@ -89,9 +99,30 @@
   font-weight:700;
   padding:8px 10px;
   border-radius:10px;
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
-.public-link:hover{background:#f3f4f6}
+.public-link::after{
+  content:'';
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:6px;
+  height:2px;
+  border-radius:999px;
+  background:currentColor;
+  transform:scaleX(0);
+  transform-origin:left center;
+  opacity:.55;
+  transition: transform 200ms ease;
+}
+
+.public-link:hover{background:#f3f4f6;transform:translateY(-2px)}
+.public-link:hover::after{transform:scaleX(1)}
 
 .public-link.active{background:#111827;color:#fff}
 
