@@ -1,5 +1,9 @@
 <nav class="public-navbar" *ngIf="showPublicNavbar()">
-  <a class="public-brand" routerLink="/">Centre Commercial</a>
+  <a class="public-brand" routerLink="/" aria-label="Centre Commercial">
+    <span class="public-logo-wrap">
+      <img class="public-logo" src="assets/logo.png" alt="Centre Commercial" />
+    </span>
+  </a>
 
   <div class="public-links" [class.mobile-open]="mobileMenuOpen()">
     <a class="public-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Accueil</a>
