@@ -1,8 +1,48 @@
 <div class="page">
-  <h1>👤 Profil</h1>
+  <h1>
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 21a8 8 0 0 0-16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+    </svg>
+    Profil
+  </h1>
+
+  <section class="card" *ngIf="isClient">
+    <h2>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 6h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M9 12h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M9 18h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M4 6h.01" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <path d="M4 12h.01" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        <path d="M4 18h.01" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      Mes achats
+    </h2>
+    <p>Consultez l'historique de vos commandes et suivis de livraison.</p>
+    <div class="actions">
+      <a class="btn secondary" routerLink="/client/purchases">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M9 12h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M9 18h11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 6h.01" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          <path d="M4 12h.01" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          <path d="M4 18h.01" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        Voir l'historique
+      </a>
+    </div>
+  </section>
 
   <section class="card">
-    <h2>📝 Modifier profil</h2>
+    <h2>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 20h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      Modifier profil
+    </h2>
 
     <div class="error" *ngIf="errorProfile">{{ errorProfile }}</div>
 
@@ -20,13 +60,24 @@
 
     <div class="actions">
       <button class="btn" type="button" (click)="saveProfile()" [disabled]="savingProfile">
-        {{ savingProfile ? '💾 Enregistrement...' : '💾 Enregistrer' }}
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M17 21v-8H7v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M7 5v4h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        {{ savingProfile ? 'Enregistrement...' : 'Enregistrer' }}
       </button>
     </div>
   </section>
 
   <section class="card">
-    <h2>🔒 Modifier mot de passe</h2>
+    <h2>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Modifier mot de passe
+    </h2>
 
     <div class="error" *ngIf="errorPassword">{{ errorPassword }}</div>
 
@@ -44,7 +95,12 @@
 
     <div class="actions">
       <button class="btn" type="button" (click)="savePassword()" [disabled]="savingPassword">
-        {{ savingPassword ? '💾 Enregistrement...' : '💾 Enregistrer' }}
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M17 21v-8H7v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M7 5v4h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        {{ savingPassword ? 'Enregistrement...' : 'Enregistrer' }}
       </button>
     </div>
   </section>

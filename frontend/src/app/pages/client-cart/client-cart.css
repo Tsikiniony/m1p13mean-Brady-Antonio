@@ -17,7 +17,10 @@
 .name{font-weight:900}
 .price{color:#6b7280;font-size:13px;margin-top:4px}
 .qty{display:flex;align-items:center;gap:8px}
-.icon{width:34px;height:34px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-weight:900;cursor:pointer}
+.icon{width:34px;height:34px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#111827}
+.icon svg{display:block;color:#111827}
+.icon svg *{stroke:currentColor}
+.icon:hover{background:#f9fafb}
 .q{min-width:22px;text-align:center;font-weight:900}
 .sub{font-weight:900;white-space:nowrap}
 .rm{display:flex;justify-content:flex-end}

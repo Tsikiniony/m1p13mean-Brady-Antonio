@@ -6,13 +6,89 @@
     </div>
   </div>
 
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>Client</label>
+        <div class="autocomplete-wrapper">
+          <input 
+            type="text" 
+            [(ngModel)]="filters.client" 
+            (input)="onClientInput()"
+            (focus)="showClientAutocomplete = filters.client.length > 0"
+            placeholder="Rechercher un client..."
+            autocomplete="off"
+          />
+          <div class="autocomplete-list" *ngIf="showClientAutocomplete && filteredClientSuggestions.length > 0">
+            <div 
+              class="autocomplete-item" 
+              *ngFor="let name of filteredClientSuggestions"
+              (click)="selectClient(name)"
+            >
+              {{ name }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Article</label>
+        <div class="autocomplete-wrapper">
+          <input 
+            type="text" 
+            [(ngModel)]="filters.article" 
+            (input)="onArticleInput()"
+            (focus)="showArticleAutocomplete = filters.article.length > 0"
+            placeholder="Rechercher un article..."
+            autocomplete="off"
+          />
+          <div class="autocomplete-list" *ngIf="showArticleAutocomplete && filteredArticleSuggestions.length > 0">
+            <div 
+              class="autocomplete-item" 
+              *ngFor="let name of filteredArticleSuggestions"
+              (click)="selectArticle(name)"
+            >
+              {{ name }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>Date début</label>
+        <input type="date" [(ngModel)]="filters.dateFrom" (change)="onFilterChange()" />
+      </div>
+
+      <div class="filter-group">
+        <label>Date fin</label>
+        <input type="date" [(ngModel)]="filters.dateTo" (change)="onFilterChange()" />
+      </div>
+
+      <div class="filter-group">
+        <label>Montant min (Ar)</label>
+        <input type="number" [(ngModel)]="filters.minAmount" (input)="onFilterChange()" placeholder="0" />
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-clear" type="button" (click)="clearFilters()">🗑️ Effacer</button>
+      </div>
+    </div>
+
+    <div class="results-info">
+      {{ filteredSales.length }} résultat(s)
+    </div>
+  </div>
+
   <div class="loading" *ngIf="loading">Chargement...</div>
   <div class="error" *ngIf="!loading && error">{{ error }}</div>
 
   <div class="list" *ngIf="!loading && !error">
-    <div class="empty" *ngIf="sales.length === 0">Aucune vente pour le moment.</div>
+    <div class="empty" *ngIf="filteredSales.length === 0">Aucune vente trouvée.</div>
 
-    <div class="sale" *ngFor="let s of sales; trackBy: trackById">
+    <div class="sale" *ngFor="let s of paginatedSales; trackBy: trackById">
       <div class="row">
         <div class="left">
           <div class="client">{{ getClientLabel(s) }}</div>
@@ -49,5 +125,39 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="!loading && !error && totalPages > 1">
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === 1"
+      (click)="goToPage(currentPage - 1)"
+    >
+      ‹ Précédent
+    </button>
+
+    <div class="page-numbers">
+      <button 
+        class="page-number" 
+        *ngFor="let page of pages"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+    </div>
+
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === totalPages"
+      (click)="goToPage(currentPage + 1)"
+    >
+      Suivant ›
+    </button>
+  </div>
+
+  <div class="pagination-info" *ngIf="!loading && !error && filteredSales.length > 0">
+    Page {{ currentPage }} sur {{ totalPages }} • {{ itemsPerPage }} ventes par page
   </div>
 </div>
