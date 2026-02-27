@@ -31,6 +31,10 @@ export class ProfileComponent implements OnInit {
   errorProfile = '';
   errorPassword = '';
 
+  get isClient(): boolean {
+    return this.user?.role === 'client';
+  }
+
   constructor(private auth: AuthService, private users: UserService, private router: Router) {}
 
   ngOnInit(): void {

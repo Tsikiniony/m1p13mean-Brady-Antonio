@@ -83,7 +83,11 @@
 
 .btn.secondary{background:#fff;color:#111827;border-color:#e5e7eb}
 
-.highlights{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.highlights .pill{display:flex;align-items:center;gap:6px}
+.pill .ico{width:16px;height:16px;color:currentColor}
+.icon .ico{width:24px;height:24px;color:currentColor}
+.ficon .ico{width:20px;height:20px;color:currentColor}
+.ico{display:block}
 .pill{background:#fff;border:1px solid #e5e7eb;border-radius:999px;padding:8px 12px;font-weight:900;font-size:13px;color:#111827}
 
 .section{margin-top: 18px}

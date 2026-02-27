@@ -4,9 +4,13 @@
       <h1 class="title">Produits</h1>
       <div class="subtitle">Tous les produits de toutes les boutiques</div>
     </div>
-    <a class="cart-link" routerLink="/client/cart">
-      Panier
-      <span class="badge">{{ cartCount }}</span>
+    <a class="cart-link" routerLink="/client/cart" aria-label="Panier">
+      <svg class="cart-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path d="M6 6h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="9" cy="20" r="1.5" fill="currentColor"/>
+        <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+      </svg>
+      <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
     </a>
   </div>
 
