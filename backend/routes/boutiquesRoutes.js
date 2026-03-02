@@ -20,6 +20,12 @@ router.get(
   authorizeRoles("boutique"),
   salesController.listSalesMine
 );
+router.get(
+  "/dashboard",
+  protect,
+  authorizeRoles("boutique"),
+  boutiquesController.getDashboardMine
+);
 router.get("/", protect, authorizeRoles("boutique"), boutiquesController.listMine);
 router.post("/", protect, authorizeRoles("boutique"), boutiquesController.create);
 router.get("/:id", protect, authorizeRoles("boutique"), boutiquesController.getMineById);

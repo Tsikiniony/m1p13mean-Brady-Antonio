@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export type DeliveryLocation = { lat: number; lng: number };
 
@@ -48,7 +49,7 @@ export interface Delivery {
   providedIn: 'root'
 })
 export class BoutiqueDeliveriesService {
-  private API_URL = 'http://localhost:5000/api/boutique-deliveries';
+  private API_URL = `${environment.apiBaseUrl}/api/boutique-deliveries`;
   private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient) {}

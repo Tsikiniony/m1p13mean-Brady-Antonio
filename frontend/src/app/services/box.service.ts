@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Box {
   _id?: string;
@@ -103,7 +104,7 @@ export type CreateBoxPayload = {
   providedIn: 'root'
 })
 export class BoxService {
-  private API_URL = 'http://localhost:5000/api/boxes';
+  private API_URL = `${environment.apiBaseUrl}/api/boxes`;
   private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient) {}

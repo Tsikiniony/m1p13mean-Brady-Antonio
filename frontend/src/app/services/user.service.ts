@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface User {
   _id?: string;
@@ -20,7 +21,7 @@ export interface User {
 })
 export class UserService {
 
-  private API_URL = 'http://localhost:5000/api/users';
+  private API_URL = `${environment.apiBaseUrl}/api/users`;
   private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient) {}

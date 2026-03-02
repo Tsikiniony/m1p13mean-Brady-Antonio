@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angu
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Box, BoxService } from '../../services/box.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-home',
@@ -45,7 +46,7 @@ export class AdminHomeComponent implements OnInit {
     this.http
       .get<
         Array<{ boutiqueId: string; name?: string; category?: string | null; revenue: number; salesCount: number }>
-      >('http://localhost:5000/api/users/stats/top-boutiques-revenue?limit=5', { headers: this.getAuthHeaders() })
+      >(`${environment.apiBaseUrl}/api/users/stats/top-boutiques-revenue?limit=5`, { headers: this.getAuthHeaders() })
       .subscribe({
         next: (rows) => {
           this.topBoutiquesRevenue = rows || [];

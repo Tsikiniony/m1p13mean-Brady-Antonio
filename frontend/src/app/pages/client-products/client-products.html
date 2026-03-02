@@ -17,13 +17,59 @@
   <div class="loading" *ngIf="loading">Chargement...</div>
   <div class="error" *ngIf="!loading && error">{{ error }}</div>
 
+  <div class="filters" *ngIf="!loading && !error">
+    <div class="field autocomplete">
+      <label>Nom</label>
+      <input
+        type="text"
+        placeholder="Rechercher un produit..."
+        [(ngModel)]="nameQuery"
+        (input)="onNameInput()"
+        (focus)="onNameFocus()"
+        (blur)="onNameBlur()"
+      />
+      <div class="suggestions" *ngIf="nameAutocompleteOpen && nameSuggestions.length > 0">
+        <button type="button" class="suggestion" *ngFor="let s of nameSuggestions" (click)="selectSuggestion(s)">
+          {{ s }}
+        </button>
+      </div>
+    </div>
+
+    <div class="field autocomplete">
+      <label>Boutique</label>
+      <input
+        type="text"
+        placeholder="Filtrer par boutique..."
+        [(ngModel)]="boutiqueQuery"
+        (input)="onBoutiqueInput()"
+        (focus)="onBoutiqueFocus()"
+        (blur)="onBoutiqueBlur()"
+      />
+      <div class="suggestions" *ngIf="boutiqueAutocompleteOpen && boutiqueSuggestions.length > 0">
+        <button type="button" class="suggestion" *ngFor="let s of boutiqueSuggestions" (click)="selectBoutiqueSuggestion(s)">
+          {{ s }}
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Catégorie</label>
+      <select [(ngModel)]="selectedCategory">
+        <option value="">Toutes</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <button type="button" class="clear" (click)="clearFilters()" [disabled]="!nameQuery && !boutiqueQuery && !selectedCategory">Réinitialiser</button>
+  </div>
+
   <div class="toast" *ngIf="toastOpen" (click)="toastOpen=false">
     <div class="toast-card" [class.toast-error]="toastKind==='error'">{{ toastMessage }}</div>
   </div>
 
   <div class="grid" *ngIf="!loading && !error">
-    <a class="card" *ngFor="let a of articles; trackBy: trackById" [routerLink]="['/client/products', a._id]">
-      <div class="image">
+    <a class="card" *ngFor="let a of filteredArticles; trackBy: trackById" [routerLink]="['/client/products', a._id]">
+      <div class="image" [attr.data-category]="getBoutiqueCategory(a) || ''">
         <img [src]="getImage(a)" alt="" loading="lazy" />
       </div>
       <div class="body">
@@ -44,5 +90,6 @@
     </a>
 
     <div class="empty" *ngIf="articles.length === 0">Aucun produit disponible.</div>
+    <div class="empty" *ngIf="articles.length > 0 && filteredArticles.length === 0">Aucun produit ne correspond à votre recherche.</div>
   </div>
 </div>

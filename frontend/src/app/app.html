@@ -39,6 +39,7 @@
         </button>
         <div class="user-dropdown" *ngIf="userMenuOpen()">
           <a class="user-item" routerLink="/client/profile" (click)="toggleUserMenu()">👤 Profil</a>
+          <a class="user-item" routerLink="/client/purchases" (click)="toggleUserMenu()">🧾 Historique</a>
           <button type="button" class="user-item" (click)="logout()">Déconnexion</button>
         </div>
       </div>

@@ -45,6 +45,7 @@ export const routes: Routes = [
     path: 'boutique',
     component: BoutiqueLayoutComponent,
     children: [
+      { path: 'dashboard', component: BoutiqueDashboardComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'boutiques', component: BoutiqueBoutiquesListComponent },
       { path: 'boutiques/:id', component: BoutiqueBoutiqueDetailsComponent },
@@ -55,7 +56,7 @@ export const routes: Routes = [
       { path: 'demande-box', component: BoutiqueRequestBoxComponent },
       { path: 'rents', component: BoutiqueRentsComponent },
       { path: 'history', component: BoutiqueHistoryComponent },
-      { path: '', redirectTo: 'boutiques', pathMatch: 'full' }
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
   { path: 'boxes/:id', component: BoxDetailsComponent },

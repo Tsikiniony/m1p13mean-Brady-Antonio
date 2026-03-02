@@ -77,7 +77,7 @@ export class Login implements OnInit {
             this.router.navigate(['/client']);
             break;
           case 'boutique':
-            this.router.navigate(['/boutique']);
+            this.router.navigate(['/boutique/dashboard']);
             break;
           default:
             alert('Rôle inconnu');

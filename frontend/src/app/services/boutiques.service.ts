@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Box } from './box.service';
+import { environment } from '../../environments/environment';
 
 export interface BoutiqueOwner {
   _id?: string;
@@ -32,7 +33,7 @@ export type CreateBoutiquePayload = {
   providedIn: 'root'
 })
 export class BoutiquesService {
-  private API_URL = 'http://localhost:5000/api/boutiques';
+  private API_URL = `${environment.apiBaseUrl}/api/boutiques`;
   private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient) {}

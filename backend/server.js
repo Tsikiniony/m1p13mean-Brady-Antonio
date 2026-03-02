@@ -2,6 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const dns = require('dns');
+
+// Forcer Node.js à utiliser DNS externes (évite le 127.0.0.53 local qui bloque SRV)
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;

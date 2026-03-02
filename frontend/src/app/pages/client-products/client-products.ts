@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { PublicArticlesService, PublicArticle, PublicBoutique } from '../../services/public-articles.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth';
@@ -8,7 +9,7 @@ import { AuthService } from '../../services/auth';
 @Component({
   selector: 'app-client-products',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './client-products.html',
   styleUrl: './client-products.css'
 })
@@ -17,6 +18,12 @@ export class ClientProductsComponent implements OnInit {
   error = '';
   articles: PublicArticle[] = [];
   cartCount = 0;
+
+  nameQuery = '';
+  boutiqueQuery = '';
+  selectedCategory = '';
+  nameAutocompleteOpen = false;
+  boutiqueAutocompleteOpen = false;
 
   toastOpen = false;
   toastMessage = '';
@@ -42,6 +49,118 @@ export class ClientProductsComponent implements OnInit {
     }
     this.refreshCartCount();
     this.fetch();
+  }
+
+  get categories(): string[] {
+    const cats = new Set<string>();
+    for (const a of this.articles || []) {
+      const c = (this.getBoutiqueCategory(a) || '').trim();
+      if (c) cats.add(c);
+    }
+    return Array.from(cats).sort((a, b) => a.localeCompare(b));
+  }
+
+  get filteredArticles(): PublicArticle[] {
+    const q = (this.nameQuery || '').trim().toLowerCase();
+    const bq = (this.boutiqueQuery || '').trim().toLowerCase();
+    const cat = (this.selectedCategory || '').trim().toLowerCase();
+
+    return (this.articles || []).filter((a) => {
+      const nameOk = !q || (a?.name || '').toLowerCase().includes(q);
+      if (!nameOk) return false;
+
+      const bName = (this.getBoutiqueName(a) || '').trim().toLowerCase();
+      const boutiqueOk = !bq || bName.includes(bq);
+      if (!boutiqueOk) return false;
+
+      const aCat = (this.getBoutiqueCategory(a) || '').trim().toLowerCase();
+      const catOk = !cat || aCat === cat;
+      return catOk;
+    });
+  }
+
+  get nameSuggestions(): string[] {
+    const q = (this.nameQuery || '').trim().toLowerCase();
+    if (!q) return [];
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const a of this.articles || []) {
+      const n = (a?.name || '').trim();
+      if (!n) continue;
+      const nl = n.toLowerCase();
+      if (!nl.includes(q)) continue;
+      if (seen.has(nl)) continue;
+      seen.add(nl);
+      out.push(n);
+      if (out.length >= 8) break;
+    }
+    return out;
+  }
+
+  onNameInput(): void {
+    this.nameAutocompleteOpen = true;
+  }
+
+  onNameFocus(): void {
+    this.nameAutocompleteOpen = true;
+  }
+
+  onNameBlur(): void {
+    setTimeout(() => {
+      this.nameAutocompleteOpen = false;
+      this.cdr.detectChanges();
+    }, 120);
+  }
+
+  selectSuggestion(name: string): void {
+    this.nameQuery = name;
+    this.nameAutocompleteOpen = false;
+  }
+
+  get boutiqueSuggestions(): string[] {
+    const q = (this.boutiqueQuery || '').trim().toLowerCase();
+    if (!q) return [];
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const a of this.articles || []) {
+      const n = (this.getBoutiqueName(a) || '').trim();
+      if (!n) continue;
+      const nl = n.toLowerCase();
+      if (!nl.includes(q)) continue;
+      if (seen.has(nl)) continue;
+      seen.add(nl);
+      out.push(n);
+      if (out.length >= 8) break;
+    }
+    return out;
+  }
+
+  onBoutiqueInput(): void {
+    this.boutiqueAutocompleteOpen = true;
+  }
+
+  onBoutiqueFocus(): void {
+    this.boutiqueAutocompleteOpen = true;
+  }
+
+  onBoutiqueBlur(): void {
+    setTimeout(() => {
+      this.boutiqueAutocompleteOpen = false;
+      this.cdr.detectChanges();
+    }, 120);
+  }
+
+  selectBoutiqueSuggestion(name: string): void {
+    this.boutiqueQuery = name;
+    this.boutiqueAutocompleteOpen = false;
+  }
+
+  clearFilters(): void {
+    this.nameQuery = '';
+    this.boutiqueQuery = '';
+    this.selectedCategory = '';
+    this.nameAutocompleteOpen = false;
+    this.boutiqueAutocompleteOpen = false;
   }
 
   refreshCartCount(): void {

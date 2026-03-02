@@ -19,6 +19,53 @@
 .desktop-logout{display:inline-flex}
 .mobile-logout{display:none}
 
+.user-menu{position:relative}
+
+.user-trigger{
+  padding:8px 14px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  color:#111827;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:none;
+  text-transform:none;
+}
+
+.user-trigger:hover{background:#f3f4f6}
+
+.user-dropdown{
+  position:absolute;
+  right:0;
+  top:calc(100% + 10px);
+  min-width:200px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(17,24,39,.12);
+  padding:8px;
+  z-index:1200;
+}
+
+.user-item{
+  display:block;
+  width:100%;
+  border:none;
+  background:transparent;
+  padding:10px 12px;
+  text-align:left;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:800;
+  color:#111827;
+  box-shadow:none;
+  text-transform:none;
+  text-decoration:none;
+}
+
+.user-item:hover{background:#f3f4f6}
+
 .content{flex:1;padding:24px;max-width:1100px;margin:0 auto;width:100%;min-width:0;padding-top:96px}
 
 @media (max-width: 1024px){

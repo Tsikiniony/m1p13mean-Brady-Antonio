@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Box, BoxService } from '../../services/box.service';
 import { Boutique, BoutiquesService } from '../../services/boutiques.service';
+import { BoutiqueDashboardStats, SalesService } from '../../services/sales.service';
 
 @Component({
   selector: 'app-boutique-dashboard',
@@ -26,10 +27,15 @@ export class BoutiqueDashboardComponent implements OnInit {
 
   boxes: Box[] = [];
   loading = false;
+  loadingStats = false;
   savingProfile = false;
   requestingBoxId: string | null = null;
   error = '';
   info = '';
+
+  dashboardMonths = 6;
+  dashboard: BoutiqueDashboardStats | null = null;
+  dashboardBoutiqueId: string | null = null;
 
   // KPI Abonnements
   get totalSubscriptions(): number {
@@ -70,6 +76,7 @@ export class BoutiqueDashboardComponent implements OnInit {
   constructor(
     private boutiquesService: BoutiquesService,
     private boxService: BoxService,
+    private salesService: SalesService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -77,6 +84,100 @@ export class BoutiqueDashboardComponent implements OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
     this.loadBoutiques();
     this.loadBoxes();
+    this.loadDashboard();
+  }
+
+  loadDashboard(): void {
+    this.loadingStats = true;
+    this.salesService.getBoutiqueDashboardFor(this.dashboardBoutiqueId, this.dashboardMonths).subscribe({
+      next: (data) => {
+        this.dashboard = data || null;
+        this.loadingStats = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.loadingStats = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onDashboardMonthsChange(): void {
+    this.loadDashboard();
+  }
+
+  onDashboardBoutiqueChange(): void {
+    this.loadDashboard();
+  }
+
+  get hasDashboardData(): boolean {
+    return !!(this.dashboard && (this.dashboard.series?.length || this.dashboard.topProducts?.length));
+  }
+
+  get totalRevenue(): number {
+    return Number(this.dashboard?.kpis?.totalRevenue) || 0;
+  }
+
+  get totalOrders(): number {
+    return Number(this.dashboard?.kpis?.totalOrders) || 0;
+  }
+
+  get totalItemsSold(): number {
+    return Number(this.dashboard?.kpis?.totalItems) || 0;
+  }
+
+  get avgOrderValue(): number {
+    const orders = this.totalOrders;
+    return orders > 0 ? this.totalRevenue / orders : 0;
+  }
+
+  get revenueMax(): number {
+    return Math.max(0, ...((this.dashboard?.series || []).map((p) => Number(p.revenue) || 0)));
+  }
+
+  revenueBarWidthPct(revenue: number): number {
+    const max = this.revenueMax;
+    if (max <= 0) return 0;
+    return Math.round(((Number(revenue) || 0) / max) * 100);
+  }
+
+  get revenueLinePoints(): string {
+    const series = this.dashboard?.series || [];
+    if (series.length === 0) return '';
+
+    const w = 640;
+    const h = 180;
+    const pad = 18;
+    const innerW = w - pad * 2;
+    const innerH = h - pad * 2;
+
+    const max = Math.max(1, ...series.map((p) => Number(p.revenue) || 0));
+    const n = series.length;
+
+    const pts = series.map((p, i) => {
+      const x = pad + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+      const y = pad + (1 - (Number(p.revenue) || 0) / max) * innerH;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    return pts.join(' ');
+  }
+
+  get revenueLineAreaPath(): string {
+    const pts = this.revenueLinePoints;
+    if (!pts) return '';
+    const w = 640;
+    const h = 180;
+    const pad = 18;
+    const baseY = h - pad;
+
+    const first = pts.split(' ')[0];
+    const last = pts.split(' ').at(-1);
+    if (!first || !last) return '';
+
+    const [fx] = first.split(',');
+    const [lx] = last.split(',');
+    return `M ${fx} ${baseY} L ${pts.replaceAll(',', ' ')} L ${lx} ${baseY} Z`;
   }
 
   loadBoutiques(): void {
