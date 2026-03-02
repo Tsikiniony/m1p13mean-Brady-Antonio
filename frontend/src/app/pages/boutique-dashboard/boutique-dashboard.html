@@ -3,6 +3,121 @@
     <h1>🏪 Gestion de la Boutique</h1>
   </div>
 
+  <section class="dashboard-card">
+    <div class="dashboard-head">
+      <div>
+        <h2>📊 Dashboard</h2>
+        <div class="muted">Indicateurs basés sur les commandes livrées</div>
+      </div>
+      <div class="filters">
+        <div class="months-select">
+          <label>Boutique</label>
+          <select [(ngModel)]="dashboardBoutiqueId" (ngModelChange)="onDashboardBoutiqueChange()">
+            <option [ngValue]="null">Toutes mes boutiques</option>
+            <option *ngFor="let b of boutiques" [ngValue]="b._id">{{ b.name }}</option>
+          </select>
+        </div>
+        <div class="months-select">
+          <label>Derniers mois</label>
+          <select [(ngModel)]="dashboardMonths" (ngModelChange)="onDashboardMonthsChange()">
+            <option [ngValue]="3">3</option>
+            <option [ngValue]="6">6</option>
+            <option [ngValue]="12">12</option>
+            <option [ngValue]="24">24</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading" *ngIf="loadingStats">
+      <div class="spinner"></div>
+      <p>Chargement des statistiques...</p>
+    </div>
+
+    <div class="kpi-grid" *ngIf="!loadingStats">
+      <div class="kpi-card kpi-revenue">
+        <div class="kpi-top">
+
+          <div class="kpi-meta">
+            <div class="kpi-label">Chiffre d'affaires</div>
+            <div class="kpi-value">{{ totalRevenue | currency:'MGA':'symbol':'1.0-0' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-orders">
+        <div class="kpi-top">
+          <div class="kpi-meta">
+            <div class="kpi-label">Commandes</div>
+            <div class="kpi-value">{{ totalOrders }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-items">
+        <div class="kpi-top">
+          <div class="kpi-meta">
+            <div class="kpi-label">Articles vendus</div>
+            <div class="kpi-value">{{ totalItemsSold }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-avg">
+        <div class="kpi-top">
+          <div class="kpi-meta">
+            <div class="kpi-label">Panier moyen</div>
+            <div class="kpi-value">{{ avgOrderValue | currency:'MGA':'symbol':'1.0-0' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid" *ngIf="!loadingStats">
+      <div class="panel">
+        <div class="panel-title">Chiffre d'affaires par mois</div>
+        <div class="muted" *ngIf="(dashboard?.series || []).length === 0">Aucune donnée</div>
+
+        <div class="line-wrap" *ngIf="(dashboard?.series || []).length > 0">
+          <svg class="line-chart" viewBox="0 0 640 180" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2563eb" stop-opacity="0.22" />
+                <stop offset="100%" stop-color="#2563eb" stop-opacity="0.02" />
+              </linearGradient>
+            </defs>
+
+            <path class="line-area" [attr.d]="revenueLineAreaPath" />
+            <polyline class="line" [attr.points]="revenueLinePoints" />
+          </svg>
+
+          <div class="xlabels">
+            <div class="xlabel" *ngFor="let p of dashboard?.series">{{ p.label }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Top 5 produits les plus vendus</div>
+        <div class="muted" *ngIf="(dashboard?.topProducts || []).length === 0">Aucune vente</div>
+
+        <div class="top-products" *ngIf="(dashboard?.topProducts || []).length > 0">
+          <div class="top-row" *ngFor="let it of dashboard?.topProducts">
+            <img class="top-img" *ngIf="it.image" [src]="it.image" alt="" />
+            <div class="top-main">
+              <div class="top-name">{{ it.name }}</div>
+              <div class="top-meta">
+                <span>{{ it.quantity }} vendu(s)</span>
+                <span class="dot">•</span>
+                <span>{{ it.revenue | currency:'MGA':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <div class="error-message" *ngIf="error">
     {{ error }}
   </div>
@@ -11,64 +126,7 @@
     {{ info }}
   </div>
 
-  <section class="dashboard-card">
-    <h2>➕ Créer une boutique</h2>
-
-    <div class="form-row">
-      <label>Nom</label>
-      <input type="text" [(ngModel)]="newBoutiqueName" placeholder="Nom de la boutique" />
-    </div>
-
-    <div class="form-row">
-      <label>Catégorie</label>
-      <select [(ngModel)]="newBoutiqueCategory">
-        <option [ngValue]="null">Choisir...</option>
-        <option *ngFor="let c of categories" [ngValue]="c">{{ c }}</option>
-      </select>
-    </div>
-
-    <button class="action-btn" (click)="createBoutique()" [disabled]="creatingBoutique">
-      {{ creatingBoutique ? 'Création...' : 'Créer' }}
-    </button>
-  </section>
-
-  <section class="dashboard-card" style="margin-top: 20px;">
-    <h2>🏪 Boutique active</h2>
-
-    <div class="form-row">
-      <label>Sélection</label>
-      <select [(ngModel)]="selectedBoutiqueId" (ngModelChange)="onSelectedBoutiqueChange()">
-        <option [ngValue]="null">Choisir...</option>
-        <option *ngFor="let b of boutiques" [ngValue]="b._id">{{ b.name }}</option>
-      </select>
-    </div>
-  </section>
-
-  <section class="dashboard-card" style="margin-top: 20px;">
-    <h2>📝 Profil Boutique</h2>
-
-    <div *ngIf="!selectedBoutiqueId" style="padding: 12px 0;">
-      Sélectionne une boutique pour modifier son profil.
-    </div>
-
-    <div class="form-row">
-      <label>Nom</label>
-      <input type="text" [(ngModel)]="profileName" placeholder="Nom de la boutique" />
-    </div>
-
-    <div class="form-row">
-      <label>Catégorie</label>
-      <select [(ngModel)]="profileCategory">
-        <option [ngValue]="null">Choisir...</option>
-        <option *ngFor="let c of categories" [ngValue]="c">{{ c }}</option>
-      </select>
-    </div>
-
-    <button class="action-btn" (click)="saveProfile()" [disabled]="savingProfile">
-      {{ savingProfile ? 'Enregistrement...' : 'Enregistrer' }}
-    </button>
-  </section>
-
+ 
   <!-- Abonnements KPI -->
   <section class="dashboard-card" style="margin-top: 20px;" *ngIf="!loading">
     <h2>📊 Abonnements</h2>
@@ -88,45 +146,7 @@
     </div>
   </section>
 
-  <section class="dashboard-card" style="margin-top: 20px;" *ngIf="!loading">
-    <h2>📦 Demande d'allocation de Box</h2>
-    <p>Sélectionne une box disponible puis envoie une demande. L'admin devra valider.</p>
-
-    <div class="table-container">
-      <table class="boxes-table">
-        <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Numéro</th>
-            <th>Loyer</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let box of availableBoxes" [class.cancelled]="isBoxCancelled(box)">
-            <td>{{ box.name }}</td>
-            <td>{{ box.number }}</td>
-            <td>{{ box.rent }}</td>
-            <td>
-              <ng-container *ngIf="isBoxCancelled(box); else normalAction">
-                <span class="muted">Disponible à partir du {{ getCancelAvailableDate(box) }}</span>
-              </ng-container>
-              <ng-template #normalAction>
-                <button class="action-btn" (click)="requestBox(box)" [disabled]="isButtonDisabled(box)">
-                  {{ isRequesting(box._id) ? 'Demande...' : 'Demander' }}
-                </button>
-              </ng-template>
-            </td>
-          </tr>
-
-          <tr *ngIf="availableBoxes.length === 0">
-            <td colspan="4" style="text-align:center; padding: 16px;">Aucune box disponible</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
+ 
   <div class="loading" *ngIf="loading">
     <div class="spinner"></div>
     <p>Chargement...</p>

@@ -2,13 +2,14 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private API_URL = 'http://localhost:5000/api/auth';
+  private API_URL = `${environment.apiBaseUrl}/api/auth`;
   private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient, private router: Router) {}

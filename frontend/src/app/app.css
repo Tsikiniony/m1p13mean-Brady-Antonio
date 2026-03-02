@@ -227,6 +227,11 @@
   color:#111827;
   box-shadow:none;
   text-transform:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  line-height:1.15;
+  white-space:nowrap;
 }
 
 .user-item:hover{background:#f3f4f6}

@@ -8,18 +8,26 @@
 
     <div class="navbar-menu" [class.open]="menuOpen">
       <div class="links">
-        <a routerLink="/boutique/profile" routerLinkActive="active" class="nav-link">👤 Profil</a>
+        <a routerLink="/boutique/dashboard" routerLinkActive="active" class="nav-link">📊 Dashboard</a>
         <a routerLink="/boutique/boutiques" routerLinkActive="active" class="nav-link">Mes boutiques</a>
         <a routerLink="/boutique/demande-box" routerLinkActive="active" class="nav-link">Demander une box</a>
         <a routerLink="/boutique/sales" routerLinkActive="active" class="nav-link">Ventes</a>
         <a routerLink="/boutique/deliveries" routerLinkActive="active" class="nav-link">Livraisons</a>
-        <a routerLink="/boutique/rents" routerLinkActive="active" class="nav-link">Mes loyers</a>
-        <a routerLink="/boutique/history" routerLinkActive="active" class="nav-link">Mon historique</a>
       </div>
       <button type="button" class="logout-btn mobile-logout" (click)="logout()">Déconnexion</button>
     </div>
 
-    <button type="button" class="logout-btn desktop-logout" (click)="logout()">Déconnexion</button>
+    <div class="user-menu desktop-logout">
+      <button type="button" class="user-trigger" (click)="toggleUserMenu()">
+        {{ getBoutiqueLabel() }}
+      </button>
+      <div class="user-dropdown" *ngIf="userMenuOpen">
+        <a class="user-item" routerLink="/boutique/profile" (click)="toggleUserMenu()">👤 Profil</a>
+        <a class="user-item" routerLink="/boutique/history" (click)="toggleUserMenu()">🧾 Mon historique</a>
+        <a class="user-item" routerLink="/boutique/rents" (click)="toggleUserMenu()">🏷️ Mes loyers</a>
+        <button type="button" class="user-item" (click)="logout()">Déconnexion</button>
+      </div>
+    </div>
   </nav>
 
   <div class="content">

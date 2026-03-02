@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth';
 })
 export class BoutiqueLayoutComponent {
   menuOpen = false;
+  userMenuOpen = false;
 
   constructor(
     private auth: AuthService,
@@ -20,6 +21,7 @@ export class BoutiqueLayoutComponent {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.closeMenu();
+        this.userMenuOpen = false;
       }
     });
   }
@@ -32,6 +34,15 @@ export class BoutiqueLayoutComponent {
     this.menuOpen = false;
   }
 
+  getBoutiqueLabel(): string {
+    const u: any = this.auth.getUser();
+    return u?.name || u?.email || 'Boutique';
+  }
+
+  toggleUserMenu(): void {
+    this.userMenuOpen = !this.userMenuOpen;
+  }
+
   @HostListener('document:keydown.escape', ['$event'])
   onEscapeKey(event: Event): void {
     if (!this.menuOpen) return;
@@ -41,6 +52,7 @@ export class BoutiqueLayoutComponent {
 
   logout() {
     this.closeMenu();
+    this.userMenuOpen = false;
     this.auth.logout();
   }
 }

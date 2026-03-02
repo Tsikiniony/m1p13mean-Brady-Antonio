@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface PurchaseBoutique {
   _id: string;
@@ -36,7 +37,7 @@ export type CheckoutPayload = {
   providedIn: 'root'
 })
 export class PurchasesService {
-  private API_URL = 'http://localhost:5000/api/purchases';
+  private API_URL = `${environment.apiBaseUrl}/api/purchases`;
   private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient) {}

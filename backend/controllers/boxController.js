@@ -1,6 +1,14 @@
 const Box = require("../models/Box");
 const Boutique = require("../models/Boutique");
 
+function getPublicBaseUrl(req) {
+  const fromEnv = process.env.PUBLIC_BASE_URL;
+  if (typeof fromEnv === "string" && fromEnv.trim()) {
+    return fromEnv.trim().replace(/\/+$/, "");
+  }
+  return `${req.protocol}://${req.get("host")}`;
+}
+
 const autoReleaseExpiredAndCancelledAllocations = async () => {
   const now = new Date();
   await Box.updateMany(
@@ -671,7 +679,7 @@ exports.createBox = async (req, res) => {
 
     let imageUrl = typeof image === "string" ? image : "";
     if (req.file) {
-      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      const baseUrl = getPublicBaseUrl(req);
       imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
     }
 
@@ -723,7 +731,7 @@ exports.updateBox = async (req, res) => {
     }
 
     if (req.file) {
-      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      const baseUrl = getPublicBaseUrl(req);
       updateData.image = `${baseUrl}/uploads/${req.file.filename}`;
     }
     const box = await Box.findByIdAndUpdate(req.params.id, updateData, {

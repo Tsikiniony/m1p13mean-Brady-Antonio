@@ -2,6 +2,14 @@ const Article = require("../models/Article");
 const Boutique = require("../models/Boutique");
 const Stock = require("../models/Stock");
 
+function getPublicBaseUrl(req) {
+  const fromEnv = process.env.PUBLIC_BASE_URL;
+  if (typeof fromEnv === "string" && fromEnv.trim()) {
+    return fromEnv.trim().replace(/\/+$/, "");
+  }
+  return `${req.protocol}://${req.get("host")}`;
+}
+
 async function assertMineBoutiqueOr404({ boutiqueId, ownerId }) {
   const boutique = await Boutique.findOne({ _id: boutiqueId, owner: ownerId });
   if (!boutique) {
@@ -52,7 +60,7 @@ exports.createMineForBoutique = async (req, res) => {
 
     let imageUrl = null;
     if (req.file) {
-      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      const baseUrl = getPublicBaseUrl(req);
       imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
     }
 
@@ -130,7 +138,7 @@ exports.updateMineArticleForBoutique = async (req, res) => {
     }
 
     if (req.file) {
-      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      const baseUrl = getPublicBaseUrl(req);
       article.image = `${baseUrl}/uploads/${req.file.filename}`;
     }
 

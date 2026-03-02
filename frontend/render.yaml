@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: m1p13mean-Brady-Antonio
+    env: node
+    region: frankfurt
+    buildCommand: npm run build
+    startCommand: node dist/frontend/server/server.mjs
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
